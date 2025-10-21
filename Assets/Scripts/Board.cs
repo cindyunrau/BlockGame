@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class Board : MonoBehaviour
 {
-    public event Action<int> OnBlockPlaced;
-    public event Action<int> OnLinesCleared;
+    public event Action<int, int> OnBlockPlaced;
+    public event Action<int, int> OnLinesCleared;
 
     public GameObject tilePrefab;
 
@@ -106,6 +106,18 @@ public class Board : MonoBehaviour
         return true;
     }
 
+    private bool CanPlace(Block block, Vector3 pos)
+    {
+        foreach (Transform mino in block.minos)
+        {
+            if (!InBounds(pos + mino.localPosition) || IsOccupied(pos + mino.localPosition))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void Hover(List<Transform> minos)
     {
         ClearGhosts();
@@ -131,6 +143,30 @@ public class Board : MonoBehaviour
             SetCellColor(childIndex, activeColor); 
         }
         _activeGhosts.Clear();
+    }
+
+    public bool CheckPlaceable(Block block)
+    {
+        bool isPlaceable = false;
+        for (int i = 0; i < numCols; i++)
+        {
+            for (int j = 0; j < numRows; j++)
+            {
+                if (CanPlace(block, new Vector3(i, j, 1)))
+                {
+                    isPlaceable = true;
+                }
+            }
+        }
+        if (isPlaceable)
+        {
+            block.SetColor(activeColor);
+        }
+        else
+        {
+            block.SetColor(ghostColor);
+        }
+        return isPlaceable;
     }
 
     public bool TryPlaceBlock(Block block)
@@ -164,36 +200,40 @@ public class Board : MonoBehaviour
         foreach (int index in colsToClear) ClearCol(index);
         foreach (int index in rowsToClear) ClearRow(index);
 
-        OnBlockPlaced.Invoke(block.value);
-        OnLinesCleared.Invoke(colsToClear.Count + rowsToClear.Count);
+        OnBlockPlaced.Invoke(block.value, block.spawnLocation);
+        OnLinesCleared.Invoke(colsToClear.Count + rowsToClear.Count, colsToClear.Count*numRows + rowsToClear.Count*numCols);
 
         Destroy(block.gameObject);
     }
 
     //Returns true if the column at index is all filled in, otherwise false
-    private bool CheckCol(int index)
+    private bool CheckCol(int col)
     {
         for (int r = 0; r < numRows; r++)
         {
-            if (!occupied[index, r])
-            {
-                return false;
-            }
+            if (!CheckCell(col, r)) return false;
         }
         return true;
     }
 
     //Returns true if the row at index is all filled in, otherwise false
-    private bool CheckRow(int index)
+    private bool CheckRow(int row)
     {
         for (int c = 0; c < numCols; c++)
         {
-            if (!occupied[c, index])
-            {
-                return false;
-            }
+            if (!CheckCell(c, row)) return false;
         }
         return true;
+    }
+
+    //Returns true if the cell at [col,row] is all filled in, otherwise false
+    private bool CheckCell(int col, int row)
+    {
+        if (occupied[col, row])
+        {
+            return true;
+        }
+        return false;
     }
 
     private void ClearCol(int index)

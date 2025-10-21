@@ -7,12 +7,14 @@ public class Block: MonoBehaviour
     public List<Transform> minos = new();
 
     public int value = 0;
+    public int spawnLocation;
+    public bool placeable = true;
     
     private Vector3 offset;
     private Vector3 originalPosition;
     private Board board;
 
-    private void Start()
+    private void Awake()
     {
         originalPosition = transform.position;
         board = FindObjectOfType<Board>(true);
@@ -49,5 +51,13 @@ public class Block: MonoBehaviour
     private void SetOriginalPosition()
     {
         transform.position = originalPosition;
+    }
+
+    public void SetColor(Color color)
+    {
+        foreach(Transform mino in minos)
+        {
+            mino.GetComponent<SpriteRenderer>().color = color;
+        }
     }
 }
