@@ -7,8 +7,7 @@ using UnityEngine;
 
 public class Board : MonoBehaviour
 {
-    public event Action<int, int> OnBlockPlaced;
-    public event Action<int, int> OnLinesCleared;
+    public event Action<int, int, int, int> OnBlockPlaced;
 
     public GameObject tilePrefab;
 
@@ -56,6 +55,15 @@ public class Board : MonoBehaviour
         foreach(int i in _activeGhosts)
         {
             ShowGhost(i);
+        }
+    }
+
+    public void Reset()
+    {
+        foreach(Transform child in transform)
+        {
+            child.GetComponent<SpriteRenderer>().sprite = tileSprite;
+            occupied[(int) child.localPosition.x, (int)child.localPosition.y] = false;
         }
     }
 
@@ -164,6 +172,7 @@ public class Board : MonoBehaviour
         }
         else
         {
+            print("block not placeable" + block);
             block.SetColor(ghostColor);
         }
         return isPlaceable;
@@ -191,7 +200,7 @@ public class Board : MonoBehaviour
             Cell cell = WorldToBoard(mino.transform.position);
             occupied[cell.c, cell.r] = true;
 
-            SetCellSprite(cell, blockSprite);
+            SetCellSprite(cell.c, cell.r, blockSprite);
 
             if (CheckCol(cell.c)) colsToClear.Add(cell.c);
             if (CheckRow(cell.r)) rowsToClear.Add(cell.r);
@@ -200,8 +209,8 @@ public class Board : MonoBehaviour
         foreach (int index in colsToClear) ClearCol(index);
         foreach (int index in rowsToClear) ClearRow(index);
 
-        OnBlockPlaced.Invoke(block.value, block.spawnLocation);
-        OnLinesCleared.Invoke(colsToClear.Count + rowsToClear.Count, colsToClear.Count*numRows + rowsToClear.Count*numCols);
+        OnBlockPlaced.Invoke(block.value, block.spawnLocation, colsToClear.Count + rowsToClear.Count, colsToClear.Count * numRows + rowsToClear.Count * numCols);
+        //OnLinesCleared.Invoke();
 
         Destroy(block.gameObject);
     }
@@ -236,37 +245,33 @@ public class Board : MonoBehaviour
         return false;
     }
 
-    private void ClearCol(int index)
+    private void ClearCol(int col)
     {
-        Debug.Log($"column {index} clear");
-        Cell cell = new();
+        Debug.Log($"column {col} clear");
         for (int r = 0; r < numRows; r++)
         {
-            cell.c = index; cell.r = r;
-            ClearCell(cell);
+            ClearCell(col, r);
         }
     }
 
-    private void ClearRow(int index)
+    private void ClearRow(int row)
     {
-        Debug.Log($"row {index} clear");
-        Cell cell = new();
+        Debug.Log($"row {row} clear");
         for (int c = 0; c < numCols; c++)
         {
-            cell.c = c; cell.r = index;
-            ClearCell(cell);
+            ClearCell(c,row);
         }
     }
 
-    private void ClearCell(Cell coords)
+    private void ClearCell(int c, int r)
     {
-        occupied[coords.c, coords.r] = false;
-        SetCellSprite(coords, tileSprite);
+        occupied[c, r] = false;
+        SetCellSprite(c, r, tileSprite);
     }
 
-    private void SetCellSprite(Cell coords, Sprite sprite)
+    private void SetCellSprite(int c, int r, Sprite sprite)
     {
-        transform.GetChild(cellIndicies[coords.c, coords.r]).GetComponent<SpriteRenderer>().sprite = sprite;
+        transform.GetChild(cellIndicies[c, r]).GetComponent<SpriteRenderer>().sprite = sprite;
     }
    
 

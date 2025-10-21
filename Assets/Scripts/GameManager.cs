@@ -19,13 +19,13 @@ public class GameManager : MonoBehaviour
     private List<Block> _active = new();
 
     public TextMeshProUGUI scoreUI;
+    public GameObject button;
 
     void Start()
     {
         board = FindObjectOfType<Board>(true);
 
         board.OnBlockPlaced += HandleBlockPlaced;
-        board.OnLinesCleared += HandleLinesCleared;
 
         foreach(Transform sp in transform)
         {
@@ -36,23 +36,50 @@ public class GameManager : MonoBehaviour
         NewGame();
     }
 
-    private void NewGame()
+    public void NewGame()
     {
         score = 0; streak = 0;
         UpdateUI();
-        SpawnAll();
 
+        SpawnAll();
     }
 
-    private void HandleBlockPlaced(int blockValue, int spawnLocation)
+    public void Reset()
+    {
+        ResetTray();
+        board.Reset();
+        button.SetActive(false);
+
+        NewGame();
+    }
+
+    private void GameOver()
+    {
+        print("Game over");
+        scoreUI.text = $"No Moves Left ;(\nYour final score was: {score}";
+        button.SetActive(true);
+    }
+
+    private void HandleBlockPlaced(int blockValue, int spawnLocation, int numLines, int blocksRemoved)
     {
         score += blockValue;
         _active[spawnLocation] = null;
 
-        if (IsTrayEmpty()) SpawnAll();
+        HandleLinesCleared(numLines, blocksRemoved);
 
+        if (IsTrayEmpty()) SpawnAll();
         UpdateUI();
-        CheckNoMoves();
+
+        if (CheckNoMoves()) GameOver();
+    }
+
+    private void ResetTray()
+    {
+        foreach(Block block in _active)
+        {
+            if(block) Destroy(block.gameObject);
+        }
+
     }
 
     private bool IsTrayEmpty()
@@ -78,11 +105,11 @@ public class GameManager : MonoBehaviour
         int combo = numLines * 10;
         streak = (numLines > 0) ? streak + 1 : 0;
         score += (basePoints + combo) * streak ;
-        UpdateUI();
     }
 
     private void UpdateUI()
     {
+        print("update ui");
         scoreUI.text = $"{score}";
     }
 
@@ -100,20 +127,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
     private bool CheckNoMoves()
     {
-        bool movesLeft = false;
+        bool noMoves = true;
         foreach (Block block in _active)
         {
             if (block)
             {
                 if (board.CheckPlaceable(block))
                 {
-                    movesLeft = true;
+                    // todo glitches sometimes
+                    noMoves = false;
                 } 
             }
         }
-        return movesLeft;
+        return noMoves;
     }
 
     private Block ChooseBlock()
