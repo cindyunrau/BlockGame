@@ -97,8 +97,6 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
-
-
     private void HandleLinesCleared(int numLines, int blocksRemoved)
     {
         int basePoints = 2 * blocksRemoved;
@@ -137,7 +135,6 @@ public class GameManager : MonoBehaviour
             {
                 if (board.CheckPlaceable(block))
                 {
-                    // todo glitches sometimes
                     noMoves = false;
                 } 
             }

@@ -77,11 +77,11 @@ public class Board : MonoBehaviour
     }
 
     // Converts Board Coordinates (int) to World Coordinates (float)
-    private Vector3 BoardToWorld(Cell board)
+    private Vector3 BoardToWorld(int x, int y)
     {
         Vector3 result = new();
-        result.x = transform.position.x + board.c;
-        result.y = transform.position.y + board.r;
+        result.x = transform.position.x + x;
+        result.y = transform.position.y + y;
         result.z = transform.position.z;
         return result;
     }
@@ -89,7 +89,7 @@ public class Board : MonoBehaviour
     private bool InBounds(Vector3 coords)
     {
         Cell cell = WorldToBoard(coords);
-        if(cell.c < numCols && cell.c >=0 && cell.r < numRows && cell.r >= 0)
+        if (cell.c < numCols && cell.c >= 0 && cell.r < numRows && cell.r >= 0)
         {
             return true;
         }
@@ -101,6 +101,20 @@ public class Board : MonoBehaviour
         Cell cell = WorldToBoard(coords);
         return occupied[cell.c, cell.r];
     }
+
+    //private bool InBounds(Vector3 coords)
+    //{
+    //    if ((int) coords.x < numCols && (int)coords.x >= 0 && (int)coords.y < numRows && (int)coords.y >= 0)
+    //    {
+    //        return true;
+    //    }
+    //    return false;
+    //}
+
+    //private bool IsOccupied(Vector3 coords)
+    //{
+    //    return occupied[(int) coords.x, (int)coords.y];
+    //}
 
     private bool CanPlace(List<Transform> minos)
     {
@@ -120,6 +134,7 @@ public class Board : MonoBehaviour
         {
             if (!InBounds(pos + mino.localPosition) || IsOccupied(pos + mino.localPosition))
             {
+                print("Cant place mino at: " + (pos + mino.localPosition));
                 return false;
             }
         }
@@ -160,7 +175,8 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < numRows; j++)
             {
-                if (CanPlace(block, new Vector3(i, j, 1)))
+                print("Trying to place "+ block + " at: " + i + ":" + j);
+                if (CanPlace(block, BoardToWorld(i,j)))
                 {
                     isPlaceable = true;
                 }
@@ -202,15 +218,14 @@ public class Board : MonoBehaviour
 
             SetCellSprite(cell.c, cell.r, blockSprite);
 
-            if (CheckCol(cell.c)) colsToClear.Add(cell.c);
-            if (CheckRow(cell.r)) rowsToClear.Add(cell.r);
+            if (CheckCol(cell.c) && !colsToClear.Contains(cell.c)) colsToClear.Add(cell.c);
+            if (CheckRow(cell.r) && !rowsToClear.Contains(cell.r)) rowsToClear.Add(cell.r);
         }
 
         foreach (int index in colsToClear) ClearCol(index);
         foreach (int index in rowsToClear) ClearRow(index);
 
         OnBlockPlaced.Invoke(block.value, block.spawnLocation, colsToClear.Count + rowsToClear.Count, colsToClear.Count * numRows + rowsToClear.Count * numCols);
-        //OnLinesCleared.Invoke();
 
         Destroy(block.gameObject);
     }
