@@ -107,7 +107,6 @@ public class GameManager : MonoBehaviour
 
     private void UpdateUI()
     {
-        print("update ui");
         scoreUI.text = $"{score}";
     }
 

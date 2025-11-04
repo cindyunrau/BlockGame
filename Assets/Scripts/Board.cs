@@ -9,70 +9,42 @@ public class Board : MonoBehaviour
 {
     public event Action<int, int, int, int> OnBlockPlaced;
 
-    public GameObject tilePrefab;
+    public GameObject cellPrefab;
 
-    public int numCols = 4;
-    public int numRows = 3;
+    public static int numCols = 4;
+    public static int numRows = 3;
 
-    public Color activeColor = Color.white;
-    public Color ghostColor = Color.gray;
-    public Sprite tileSprite;
-    public Sprite blockSprite;
-
-    private int[,] cellIndicies;
-    private bool[,] occupied;
-
-    private readonly List<int> _activeGhosts = new();
-
-    private struct Cell
-    {
-        public int c; public int r;
-
-        public override string ToString()
-        {
-            return $"Cell: (c={c}, r={r})";
-        }
-    }
+    private Cell[,] cells;
 
     private void Start()
     {
-        cellIndicies = new int[numCols, numRows];
-        occupied = new bool[numCols, numRows];
-
+        cells = new Cell[numCols, numRows];
         for (int i = 0; i < numCols; i++)
         {
             for (int j = 0; j < numRows; j++)
             {
-                Instantiate(tilePrefab, new Vector3(i, j, 0) + transform.position, transform.rotation, transform);
-                cellIndicies[i, j] = (i * numRows) + j;
-                occupied[i, j] = false;
+                GameObject cell = Instantiate(cellPrefab, new Vector3(i, j, 0) + transform.position, transform.rotation, transform);
+                cells[i, j] = cell.GetComponent<Cell>();
+                cells[i, j].Init(i, j, numRows);
             }
-        }
-    }
-
-    private void Update()
-    {
-        foreach(int i in _activeGhosts)
-        {
-            ShowGhost(i);
         }
     }
 
     public void Reset()
     {
-        foreach(Transform child in transform)
+        foreach (Transform child in transform)
         {
-            child.GetComponent<SpriteRenderer>().sprite = tileSprite;
-            occupied[(int) child.localPosition.x, (int)child.localPosition.y] = false;
+            child.GetComponent<Cell>().Clear();
         }
     }
 
     // Converts World Coordinates (float) to Board Coordinates (int)
-    private Cell WorldToBoard(Vector3 world)
+    private Vector3 WorldToBoard(Vector3 world)
     {
-        Cell result = new();
-        result.c = (int)Math.Round(world.x - transform.position.x);
-        result.r = (int)Math.Round(world.y - transform.position.y);
+        Vector3 result = new();
+        result.x = (int)Math.Round(world.x - transform.position.x);
+        result.y = (int)Math.Round(world.y - transform.position.y);
+        result.z = world.z;
         return result;
     }
 
@@ -88,33 +60,20 @@ public class Board : MonoBehaviour
 
     private bool InBounds(Vector3 coords)
     {
-        Cell cell = WorldToBoard(coords);
-        if (cell.c < numCols && cell.c >= 0 && cell.r < numRows && cell.r >= 0)
+        Vector3 boardCoords = WorldToBoard(coords);
+        if (boardCoords.x < numCols && boardCoords.x >= 0 && boardCoords.y < numRows && boardCoords.y >= 0)
         {
             return true;
         }
+
         return false;
     }
 
     private bool IsOccupied(Vector3 coords)
     {
-        Cell cell = WorldToBoard(coords);
-        return occupied[cell.c, cell.r];
+        Vector3 boardCoords = WorldToBoard(coords);
+        return cells[(int)boardCoords.x, (int)boardCoords.y].isOccupied;
     }
-
-    //private bool InBounds(Vector3 coords)
-    //{
-    //    if ((int) coords.x < numCols && (int)coords.x >= 0 && (int)coords.y < numRows && (int)coords.y >= 0)
-    //    {
-    //        return true;
-    //    }
-    //    return false;
-    //}
-
-    //private bool IsOccupied(Vector3 coords)
-    //{
-    //    return occupied[(int) coords.x, (int)coords.y];
-    //}
 
     private bool CanPlace(List<Transform> minos)
     {
@@ -134,7 +93,6 @@ public class Board : MonoBehaviour
         {
             if (!InBounds(pos + mino.localPosition) || IsOccupied(pos + mino.localPosition))
             {
-                print("Cant place mino at: " + (pos + mino.localPosition));
                 return false;
             }
         }
@@ -143,29 +101,23 @@ public class Board : MonoBehaviour
 
     public void Hover(List<Transform> minos)
     {
-        ClearGhosts();
         if (CanPlace(minos))
         {
             foreach (Transform mino in minos)
             {
-                Cell cell = WorldToBoard(mino.position);
-                _activeGhosts.Add(cellIndicies[cell.c,cell.r]);
+                Vector3 coords = WorldToBoard(mino.position);
+                Cell cell = cells[(int)coords.x, (int)coords.y];
+                cell.isShadow = true;
+
+                if (CheckCol(cell.c))
+                {
+                    for(int row = 0; row < numRows; row++)
+                    {
+                        cells[cell.c, row].isShadow = true;
+                    }
+                }
             }
         }
-    }
-
-    private void ShowGhost(int childIndex)
-    {
-        SetCellColor(childIndex, ghostColor); 
-    }
-
-    private void ClearGhosts()
-    {
-        foreach(int childIndex in _activeGhosts)
-        {
-            SetCellColor(childIndex, activeColor); 
-        }
-        _activeGhosts.Clear();
     }
 
     public bool CheckPlaceable(Block block)
@@ -175,28 +127,17 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < numRows; j++)
             {
-                print("Trying to place "+ block + " at: " + i + ":" + j);
-                if (CanPlace(block, BoardToWorld(i,j)))
+                if (CanPlace(block, BoardToWorld(i, j)))
                 {
                     isPlaceable = true;
                 }
             }
-        }
-        if (isPlaceable)
-        {
-            block.SetColor(activeColor);
-        }
-        else
-        {
-            print("block not placeable" + block);
-            block.SetColor(ghostColor);
         }
         return isPlaceable;
     }
 
     public bool TryPlaceBlock(Block block)
     {
-        ClearGhosts();
         if (CanPlace(block.minos))
         {
             PlaceBlock(block);
@@ -208,22 +149,22 @@ public class Board : MonoBehaviour
 
     private void PlaceBlock(Block block)
     {
-        List<int> colsToClear = new();
-        List<int> rowsToClear = new();
+        List<Cell> colsToClear = new();
+        List<Cell> rowsToClear = new();
 
         foreach (Transform mino in block.minos)
         {
-            Cell cell = WorldToBoard(mino.transform.position);
-            occupied[cell.c, cell.r] = true;
+            Vector3 coords = WorldToBoard(mino.position);
+            Cell cell = cells[(int)coords.x, (int)coords.y];
+            cell.isOccupied = true;
 
-            SetCellSprite(cell.c, cell.r, blockSprite);
 
-            if (CheckCol(cell.c) && !colsToClear.Contains(cell.c)) colsToClear.Add(cell.c);
-            if (CheckRow(cell.r) && !rowsToClear.Contains(cell.r)) rowsToClear.Add(cell.r);
+            if (CheckCol(cell.c) && !colsToClear.Contains(cell)) colsToClear.Add(cell);
+            if (CheckRow(cell.r) && !rowsToClear.Contains(cell)) rowsToClear.Add(cell);
         }
 
-        foreach (int index in colsToClear) ClearCol(index);
-        foreach (int index in rowsToClear) ClearRow(index);
+        foreach (Cell cell in colsToClear) ClearCol(cell.c);
+        foreach (Cell cell in rowsToClear) ClearRow(cell.r);
 
         OnBlockPlaced.Invoke(block.value, block.spawnLocation, colsToClear.Count + rowsToClear.Count, colsToClear.Count * numRows + rowsToClear.Count * numCols);
 
@@ -233,9 +174,9 @@ public class Board : MonoBehaviour
     //Returns true if the column at index is all filled in, otherwise false
     private bool CheckCol(int col)
     {
-        for (int r = 0; r < numRows; r++)
+        for (int row = 0; row < numRows; row++)
         {
-            if (!CheckCell(col, r)) return false;
+            if (!cells[col, row].isShadow && !cells[col, row].isOccupied) return false;
         }
         return true;
     }
@@ -243,56 +184,29 @@ public class Board : MonoBehaviour
     //Returns true if the row at index is all filled in, otherwise false
     private bool CheckRow(int row)
     {
-        for (int c = 0; c < numCols; c++)
+        for (int col = 0; col < numCols; col++)
         {
-            if (!CheckCell(c, row)) return false;
+            if (!cells[col, row].isOccupied) return false;
         }
         return true;
-    }
-
-    //Returns true if the cell at [col,row] is all filled in, otherwise false
-    private bool CheckCell(int col, int row)
-    {
-        if (occupied[col, row])
-        {
-            return true;
-        }
-        return false;
     }
 
     private void ClearCol(int col)
     {
         Debug.Log($"column {col} clear");
-        for (int r = 0; r < numRows; r++)
+        for (int row = 0; row < numRows; row++)
         {
-            ClearCell(col, r);
+            cells[col, row].Clear();
         }
     }
 
     private void ClearRow(int row)
     {
         Debug.Log($"row {row} clear");
-        for (int c = 0; c < numCols; c++)
+        for (int col = 0; col < numCols; col++)
         {
-            ClearCell(c,row);
+            cells[col, row].Clear();
         }
     }
 
-    private void ClearCell(int c, int r)
-    {
-        occupied[c, r] = false;
-        SetCellSprite(c, r, tileSprite);
-    }
-
-    private void SetCellSprite(int c, int r, Sprite sprite)
-    {
-        transform.GetChild(cellIndicies[c, r]).GetComponent<SpriteRenderer>().sprite = sprite;
-    }
-   
-
-    private void SetCellColor(int index, Color color)
-    {
-        transform.GetChild(index).GetComponent<SpriteRenderer>().color = color;
-    }
 }
-
