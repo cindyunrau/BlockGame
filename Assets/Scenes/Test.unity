@@ -318,13 +318,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3765d84c52b8d004996bf751d28be798, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilePrefab: {fileID: 4451703303375939007, guid: ba3809863845d014cb705e74d901cea8, type: 3}
-  numCols: 5
-  numRows: 5
-  activeColor: {r: 1, g: 1, b: 1, a: 1}
-  ghostColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  tileSprite: {fileID: 21300000, guid: 490c9b443b7b4e142bb155d687416108, type: 3}
-  blockSprite: {fileID: 21300000, guid: 88431f77ad6f8a24d941b4c97c09fc49, type: 3}
+  cellPrefab: {fileID: 4451703303375939007, guid: ba3809863845d014cb705e74d901cea8, type: 3}
 --- !u!4 &152205640
 Transform:
   m_ObjectHideFlags: 0
@@ -333,7 +327,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 152205638}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -387,6 +381,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26933bbc05098544b92370453b5f5eb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blockTypes:
+  - {fileID: 412134317152219887, guid: 84650d83eaad04671b55c9f91cf44d30, type: 3}
+  - {fileID: 493342309214796351, guid: 0e627448b97914363b1658ee1991fa91, type: 3}
+  - {fileID: 493342309214796351, guid: 3b5eb8eeeef1745168406716d109afe2, type: 3}
+  - {fileID: 493342309214796351, guid: 570091412f37b4b36b3148385323be1d, type: 3}
+  - {fileID: 493342309214796351, guid: cf8ba4dbbb70e4e41a7ae5f8f8e3233d, type: 3}
+  - {fileID: 412134317152219887, guid: 9385ea5836c03431ba84baa3c34c9cd1, type: 3}
+  - {fileID: 412134317152219887, guid: 0ee861e67815a9447bbc6f1e6606ac9a, type: 3}
+  - {fileID: 493342309214796351, guid: 2c48f6f1be1cdd84fbd8a19e98cadfc2, type: 3}
+  - {fileID: 493342309214796351, guid: e1800e91a559f44199467730c8e63a97, type: 3}
+  - {fileID: 412134317152219887, guid: 8b4a67ebf4d9146bf866f5003189cc08, type: 3}
+  - {fileID: 412134317152219887, guid: 5890e34c24a814fe5bd12c3d16b3095c, type: 3}
+  - {fileID: 412134317152219887, guid: b1de38795bcca472e8a2f93dae11b6b7, type: 3}
   singleBlock: {fileID: 493342309214796351, guid: 2c48f6f1be1cdd84fbd8a19e98cadfc2, type: 3}
   tBlock: {fileID: 412134317152219887, guid: 0ee861e67815a9447bbc6f1e6606ac9a, type: 3}
   score: 0
@@ -522,7 +529,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -313, y: 118}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1639792168
@@ -685,7 +692,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -323, y: 204}
+  m_AnchoredPosition: {x: -293, y: 188}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1670856763

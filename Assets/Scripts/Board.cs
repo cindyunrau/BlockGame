@@ -11,14 +11,14 @@ public class Board : MonoBehaviour
 
     public GameObject cellPrefab;
 
-    public static int numCols = 3;
-    public static int numRows = 3;
+    public static int numCols = 6;
+    public static int numRows = 5;
 
     private Cell[,] cells;
 
     private void Start()
     {
-        transform.position += new Vector3(-(numCols / 2) + 0.5f, 0, 0);
+        transform.position += new Vector3(-(numCols / 2.0f) + 0.5f, 0, 0);
         cells = new Cell[numCols, numRows];
         for (int i = 0; i < numCols; i++)
         {
@@ -194,7 +194,7 @@ public class Board : MonoBehaviour
     {
         for (int col = 0; col < numCols; col++)
         {
-            if (!cells[col, row].IsOccupied()) return false;
+            if (!cells[col, row].InShadow() && !cells[col, row].IsOccupied()) return false;
         }
         return true;
     }

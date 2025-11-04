@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 {
     private Board board;
 
+    public List<Block> blockTypes;
     public Block singleBlock;
     public Block tBlock;
 
@@ -148,9 +149,7 @@ public class GameManager : MonoBehaviour
 
     private Block ChooseBlock()
     {
-        int rng = Random.Range(1, 3);
-        if (rng == 1) return singleBlock;
-        if (rng == 2) return tBlock;
-        else return singleBlock;
+        int rng = Random.Range(0, blockTypes.Count);
+        return blockTypes[rng];
     }
 }
