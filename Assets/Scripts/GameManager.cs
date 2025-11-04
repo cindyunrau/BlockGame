@@ -113,7 +113,7 @@ public class GameManager : MonoBehaviour
 
     private void SpawnBlockAt(int i)
     {
-        _active[i] = Instantiate(ChooseBlock(), spawnPoints[i].position, spawnPoints[i].rotation);
+        _active[i] = Instantiate(ChooseBlock(), spawnPoints[i].position, ChooseRotation());
         _active[i].spawnLocation = i;
     }
 
@@ -151,5 +151,11 @@ public class GameManager : MonoBehaviour
     {
         int rng = Random.Range(0, blockTypes.Count);
         return blockTypes[rng];
+    }
+
+    private Quaternion ChooseRotation()
+    {
+        int rng = Random.Range(0, 4);
+        return Quaternion.Euler(0, 0, (float)(rng * 90));
     }
 }
