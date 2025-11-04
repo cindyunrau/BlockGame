@@ -15,11 +15,14 @@ public class Board : MonoBehaviour
     public static int numRows = 5;
 
     private Cell[,] cells;
+    private List<Cell> cellsInShadow;
 
     private void Start()
     {
         transform.position += new Vector3(-(numCols / 2.0f) + 0.5f, 0, 0);
         cells = new Cell[numCols, numRows];
+        cellsInShadow = new List<Cell>();
+
         for (int i = 0; i < numCols; i++)
         {
             for (int j = 0; j < numRows; j++)
@@ -102,28 +105,45 @@ public class Board : MonoBehaviour
         return true;
     }
 
+    private void AddShadow(Cell cell)
+    {
+        cellsInShadow.Add(cell);
+        cell.SetInShadow(true);
+    }
+
+    private void ClearShadows()
+    {
+        foreach (Cell cell in cellsInShadow)
+        {
+            cell.SetInShadow(false);
+        }
+        cellsInShadow.Clear();
+    }
+
     public void Hover(List<Transform> minos)
     {
+        ClearShadows();
+
         if (CanPlace(minos))
         {
             foreach (Transform mino in minos)
             {
                 Vector3 coords = WorldToBoard(mino.position);
                 Cell cell = cells[(int)coords.x, (int)coords.y];
-                cell.SetInShadow(true);
+                AddShadow(cell);
 
                 if (CheckCol(cell.c))
                 {
                     for(int row = 0; row < numRows; row++)
                     {
-                        cells[cell.c, row].SetInShadow(true);
+                        AddShadow(cells[cell.c, row]);
                     }
                 }
                 if (CheckRow(cell.r))
                 {
                     for (int col = 0; col < numCols; col++)
                     {
-                        cells[col, cell.r].SetInShadow(true);
+                        AddShadow(cells[col, cell.r]);
                     }
                 }
             }
@@ -159,6 +179,7 @@ public class Board : MonoBehaviour
 
     private void PlaceBlock(Block block)
     {
+        ClearShadows();
         List<Cell> colsToClear = new();
         List<Cell> rowsToClear = new();
 
@@ -167,7 +188,6 @@ public class Board : MonoBehaviour
             Vector3 coords = WorldToBoard(mino.position);
             Cell cell = cells[(int)coords.x, (int)coords.y];
             cell.SetOccupied(true);
-
 
             if (CheckCol(cell.c) && !colsToClear.Contains(cell)) colsToClear.Add(cell);
             if (CheckRow(cell.r) && !rowsToClear.Contains(cell)) rowsToClear.Add(cell);

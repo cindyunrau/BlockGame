@@ -24,11 +24,6 @@ public class Cell : MonoBehaviour
         GetComponent<SpriteRenderer>().sprite = cellSprite;
     }
 
-    void FixedUpdate()
-    {
-        SetInShadow(false);
-    }
-
     public void SetOccupied(bool value)
     {
         isOccupied = value;
