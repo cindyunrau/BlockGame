@@ -134,8 +134,13 @@ public class GameManager : MonoBehaviour
             {
                 if (board.CheckPlaceable(block))
                 {
+                    block.SetPlaceable(true);
                     noMoves = false;
-                } 
+                }
+                else
+                {
+                    block.SetPlaceable(false);
+                }
             }
         }
         return noMoves;

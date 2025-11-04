@@ -6,8 +6,8 @@ public class Cell : MonoBehaviour
 {
     public int c; public int r; 
     public int maxRows;
-    public bool isOccupied;
-    public bool isShadow;
+    private bool isOccupied;
+    private bool inShadow;
 
     public Sprite cellSprite;
     public Sprite blockSprite;
@@ -20,18 +20,37 @@ public class Cell : MonoBehaviour
     void Start()
     {
         isOccupied = false;
-        isShadow = false;
+        inShadow = false;
         GetComponent<SpriteRenderer>().sprite = cellSprite;
     }
 
-    void Update()
+    void FixedUpdate()
     {
+        SetInShadow(false);
+    }
+
+    public void SetOccupied(bool value)
+    {
+        isOccupied = value;
         if (isOccupied)
         {
             GetComponent<SpriteRenderer>().sprite = blockSprite;
         }
+        else
+        {
+            GetComponent<SpriteRenderer>().sprite = cellSprite;
+        }
+    }
 
-        if (isShadow)
+    public bool IsOccupied()
+    {
+        return isOccupied;
+    }
+
+    public void SetInShadow(bool value)
+    {
+        inShadow = value;
+        if (inShadow)
         {
             GetComponent<SpriteRenderer>().color = Color.blue;
         }
@@ -39,8 +58,11 @@ public class Cell : MonoBehaviour
         {
             GetComponent<SpriteRenderer>().color = Color.white;
         }
-        isShadow = false;
+    }
 
+    public bool InShadow()
+    {
+        return inShadow;
     }
 
     public int GetIndex()
@@ -50,8 +72,7 @@ public class Cell : MonoBehaviour
 
     public void Clear()
     {
-        isOccupied = false;
-        GetComponent<SpriteRenderer>().sprite = cellSprite;
+        SetOccupied(false);
     }
 
     public override string ToString()

@@ -60,4 +60,17 @@ public class Block: MonoBehaviour
             mino.GetComponent<SpriteRenderer>().color = color;
         }
     }
+
+    public void SetPlaceable(bool value)
+    {
+        placeable = value;
+        if (!placeable)
+        {
+            SetColor(Color.gray);
+        }
+        else
+        {
+            SetColor(Color.white);
+        }
+    }
 }

@@ -11,13 +11,14 @@ public class Board : MonoBehaviour
 
     public GameObject cellPrefab;
 
-    public static int numCols = 4;
+    public static int numCols = 3;
     public static int numRows = 3;
 
     private Cell[,] cells;
 
     private void Start()
     {
+        transform.position += new Vector3(-(numCols / 2) + 0.5f, 0, 0);
         cells = new Cell[numCols, numRows];
         for (int i = 0; i < numCols; i++)
         {
@@ -42,9 +43,10 @@ public class Board : MonoBehaviour
     private Vector3 WorldToBoard(Vector3 world)
     {
         Vector3 result = new();
-        result.x = (int)Math.Round(world.x - transform.position.x);
-        result.y = (int)Math.Round(world.y - transform.position.y);
+        result.x = (int)Math.Round(world.x - transform.position.x, MidpointRounding.AwayFromZero);
+        result.y = (int)Math.Round(world.y - transform.position.y, MidpointRounding.AwayFromZero);
         result.z = world.z;
+  
         return result;
     }
 
@@ -61,6 +63,7 @@ public class Board : MonoBehaviour
     private bool InBounds(Vector3 coords)
     {
         Vector3 boardCoords = WorldToBoard(coords);
+
         if (boardCoords.x < numCols && boardCoords.x >= 0 && boardCoords.y < numRows && boardCoords.y >= 0)
         {
             return true;
@@ -72,10 +75,10 @@ public class Board : MonoBehaviour
     private bool IsOccupied(Vector3 coords)
     {
         Vector3 boardCoords = WorldToBoard(coords);
-        return cells[(int)boardCoords.x, (int)boardCoords.y].isOccupied;
+        return cells[(int)boardCoords.x, (int)boardCoords.y].IsOccupied();
     }
 
-    private bool CanPlace(List<Transform> minos)
+    public bool CanPlace(List<Transform> minos)
     {
         foreach (Transform mino in minos)
         {
@@ -107,13 +110,20 @@ public class Board : MonoBehaviour
             {
                 Vector3 coords = WorldToBoard(mino.position);
                 Cell cell = cells[(int)coords.x, (int)coords.y];
-                cell.isShadow = true;
+                cell.SetInShadow(true);
 
                 if (CheckCol(cell.c))
                 {
                     for(int row = 0; row < numRows; row++)
                     {
-                        cells[cell.c, row].isShadow = true;
+                        cells[cell.c, row].SetInShadow(true);
+                    }
+                }
+                if (CheckRow(cell.r))
+                {
+                    for (int col = 0; col < numCols; col++)
+                    {
+                        cells[col, cell.r].SetInShadow(true);
                     }
                 }
             }
@@ -156,7 +166,7 @@ public class Board : MonoBehaviour
         {
             Vector3 coords = WorldToBoard(mino.position);
             Cell cell = cells[(int)coords.x, (int)coords.y];
-            cell.isOccupied = true;
+            cell.SetOccupied(true);
 
 
             if (CheckCol(cell.c) && !colsToClear.Contains(cell)) colsToClear.Add(cell);
@@ -171,22 +181,20 @@ public class Board : MonoBehaviour
         Destroy(block.gameObject);
     }
 
-    //Returns true if the column at index is all filled in, otherwise false
     private bool CheckCol(int col)
     {
         for (int row = 0; row < numRows; row++)
         {
-            if (!cells[col, row].isShadow && !cells[col, row].isOccupied) return false;
+            if (!cells[col, row].InShadow() && !cells[col, row].IsOccupied()) return false;
         }
         return true;
     }
 
-    //Returns true if the row at index is all filled in, otherwise false
     private bool CheckRow(int row)
     {
         for (int col = 0; col < numCols; col++)
         {
-            if (!cells[col, row].isOccupied) return false;
+            if (!cells[col, row].IsOccupied()) return false;
         }
         return true;
     }
@@ -208,5 +216,4 @@ public class Board : MonoBehaviour
             cells[col, row].Clear();
         }
     }
-
 }
