@@ -7,6 +7,7 @@ public class Block: MonoBehaviour
     public List<Transform> minos = new();
 
     public int value = 0;
+    public int cost = 0;
     public int spawnLocation;
     public bool placeable = true;
     
@@ -28,23 +29,32 @@ public class Block: MonoBehaviour
 
     void OnMouseDown()
     {
-        offset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(transform.position).z));
+        if (placeable)
+        {
+            offset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(transform.position).z));
+        }
     }
 
     void OnMouseDrag()
     {
-        Vector3 currentScreenPoint = new(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(transform.position).z);
-        Vector3 currentWorldPoint = Camera.main.ScreenToWorldPoint(currentScreenPoint) + offset;
+        if (placeable)
+        {
+            Vector3 currentScreenPoint = new(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(transform.position).z);
+            Vector3 currentWorldPoint = Camera.main.ScreenToWorldPoint(currentScreenPoint) + offset;
 
-        transform.position = currentWorldPoint;
-        board.Hover(minos);
+            transform.position = currentWorldPoint;
+            board.Hover(minos);
+        }
     }
 
     void OnMouseUp()
     {
-        if (!board.TryPlaceBlock(this))
+        if (placeable)
         {
-            SetOriginalPosition();
+            if (!board.TryPlaceBlock(this))
+            {
+                SetOriginalPosition();
+            }
         }
     }
 

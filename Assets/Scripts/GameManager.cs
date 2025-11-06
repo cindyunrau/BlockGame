@@ -16,11 +16,13 @@ public class GameManager : MonoBehaviour
     public int score = 0;
     public int streak = 0;
 
-    private List<Transform> spawnPoints = new();
-    private List<Block> _active = new();
+    private List<SpawnPoint> traySpawnPoints = new();
+    public List<SpawnPoint> shopSpawnPoints = new();
 
     public TextMeshProUGUI scoreUI;
+    public TextMeshProUGUI streakUI;
     public GameObject button;
+
 
     void Start()
     {
@@ -28,10 +30,9 @@ public class GameManager : MonoBehaviour
 
         board.OnBlockPlaced += HandleBlockPlaced;
 
-        foreach(Transform sp in transform)
+        foreach(Transform child in transform)
         {
-            spawnPoints.Add(sp);
-            _active.Add(null);
+            traySpawnPoints.Add(child.GetComponent<SpawnPoint>());
         }
 
         NewGame();
@@ -43,6 +44,9 @@ public class GameManager : MonoBehaviour
         UpdateUI();
 
         SpawnAll();
+        SpawnShopItems();
+
+        CheckNoMoves();
     }
 
     public void Reset()
@@ -61,14 +65,17 @@ public class GameManager : MonoBehaviour
         button.SetActive(true);
     }
 
-    private void HandleBlockPlaced(int blockValue, int spawnLocation, int numLines, int blocksRemoved)
+    private void HandleBlockPlaced(Block block, int numLines, int blocksRemoved)
     {
-        score += blockValue;
-        _active[spawnLocation] = null;
+        score += block.value;
+        streak -= block.cost;
+        block.GetComponentInParent<SpawnPoint>().SetActiveBlock(null);
+        Destroy(block.gameObject);
 
         HandleLinesCleared(numLines, blocksRemoved);
 
         if (IsTrayEmpty()) SpawnAll();
+        SpawnShopItems();
         UpdateUI();
 
         if (CheckNoMoves()) GameOver();
@@ -76,18 +83,22 @@ public class GameManager : MonoBehaviour
 
     private void ResetTray()
     {
-        foreach(Block block in _active)
+        foreach(SpawnPoint sp in traySpawnPoints)
         {
-            if(block) Destroy(block.gameObject);
+            if(sp.GetActiveBlock()) Destroy(sp.GetActiveBlock().gameObject);
         }
 
     }
 
     private bool IsTrayEmpty()
     {
-        foreach (Transform sp in spawnPoints)
+        foreach (SpawnPoint sp in traySpawnPoints)
         {
-            if (!IsSpawnPointEmpty(sp)) return false;
+            if (sp.GetActiveBlock())
+            {
+                //print(sp.GetActiveBlock());
+                return false;
+            }
         }
         return true;
     }
@@ -109,38 +120,54 @@ public class GameManager : MonoBehaviour
     private void UpdateUI()
     {
         scoreUI.text = $"{score}";
-    }
-
-    private void SpawnBlockAt(int i)
-    {
-        _active[i] = Instantiate(ChooseBlock(), spawnPoints[i].position, ChooseRotation());
-        _active[i].spawnLocation = i;
+        streakUI.text = $"{streak}";
     }
 
     private void SpawnAll()
     {
-        for (int i = 0; i < spawnPoints.Count; i++)
+        foreach (SpawnPoint sp in traySpawnPoints)
         {
-            SpawnBlockAt(i);
+            sp.SetActiveBlock(Instantiate(ChooseBlock(), sp.transform.position, ChooseRotation(), sp.transform));
         }
     }
-
 
     private bool CheckNoMoves()
     {
         bool noMoves = true;
-        foreach (Block block in _active)
+        Block curr;
+
+        // Check Tray Blocks
+        foreach (SpawnPoint sp in traySpawnPoints)
         {
-            if (block)
+            curr = sp.GetActiveBlock();
+            if (curr)
             {
-                if (board.CheckPlaceable(block))
+                if (board.CheckPlaceable(curr))
                 {
-                    block.SetPlaceable(true);
+                    curr.SetPlaceable(true);
                     noMoves = false;
                 }
                 else
                 {
-                    block.SetPlaceable(false);
+                    curr.SetPlaceable(false);
+                }
+            }
+        }
+
+        // Check Shop Blocks
+        foreach (SpawnPoint sp in shopSpawnPoints)
+        {
+            curr = sp.GetActiveBlock();
+            if (curr)
+            {
+                if (board.CheckPlaceable(curr) && streak >= curr.cost)
+                {
+                    curr.SetPlaceable(true);
+                    noMoves = false;
+                }
+                else
+                {
+                    curr.SetPlaceable(false);
                 }
             }
         }
@@ -157,5 +184,26 @@ public class GameManager : MonoBehaviour
     {
         int rng = Random.Range(0, 4);
         return Quaternion.Euler(0, 0, (float)(rng * 90));
+    }
+
+    // Shop
+    private bool CheckShopEmpty()
+    {
+        foreach(SpawnPoint sp in shopSpawnPoints)
+        {
+            if (!sp) return true;
+        }
+        return false;
+    }
+
+    private void SpawnShopItems()
+    {
+        foreach(SpawnPoint sp in shopSpawnPoints)
+        {
+            if (!sp.GetActiveBlock())
+            {
+                sp.SetActiveBlock(Instantiate(singleBlock, sp.transform.position, sp.transform.rotation, sp.transform));
+            }
+        }
     }
 }

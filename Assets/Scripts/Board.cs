@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class Board : MonoBehaviour
 {
-    public event Action<int, int, int, int> OnBlockPlaced;
+    public event Action<Block, int, int> OnBlockPlaced;
 
     public GameObject cellPrefab;
 
@@ -93,11 +93,12 @@ public class Board : MonoBehaviour
         return true;
     }
 
-    private bool CanPlace(Block block, Vector3 pos)
+    private bool CanPlaceAt(Block block, Vector3 pos)
     {
         foreach (Transform mino in block.minos)
         {
-            if (!InBounds(pos + mino.localPosition) || IsOccupied(pos + mino.localPosition))
+            Vector3 minoTransformed = pos + block.transform.rotation * mino.localPosition;
+            if (!InBounds(minoTransformed) || IsOccupied(minoTransformed))
             {
                 return false;
             }
@@ -152,18 +153,18 @@ public class Board : MonoBehaviour
 
     public bool CheckPlaceable(Block block)
     {
-        bool isPlaceable = false;
+        
         for (int i = 0; i < numCols; i++)
         {
             for (int j = 0; j < numRows; j++)
             {
-                if (CanPlace(block, BoardToWorld(i, j)))
+                if (CanPlaceAt(block, BoardToWorld(i, j)))
                 {
-                    isPlaceable = true;
+                    return true;
                 }
             }
         }
-        return isPlaceable;
+        return false;
     }
 
     public bool TryPlaceBlock(Block block)
@@ -196,9 +197,9 @@ public class Board : MonoBehaviour
         foreach (Cell cell in colsToClear) ClearCol(cell.c);
         foreach (Cell cell in rowsToClear) ClearRow(cell.r);
 
-        OnBlockPlaced.Invoke(block.value, block.spawnLocation, colsToClear.Count + rowsToClear.Count, colsToClear.Count * numRows + rowsToClear.Count * numCols);
+        OnBlockPlaced.Invoke(block, colsToClear.Count + rowsToClear.Count, colsToClear.Count * numRows + rowsToClear.Count * numCols);
 
-        Destroy(block.gameObject);
+        
     }
 
     private bool CheckCol(int col)
