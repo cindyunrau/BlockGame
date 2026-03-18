@@ -7,33 +7,48 @@ public class Cell : MonoBehaviour
     public int c; public int r; 
     public int maxRows;
     private bool isOccupied;
-    private bool inShadow;
+    private bool grillInShadow;
+    private bool blockInShadow;
 
-    public Sprite cellSprite;
+    private Sprite cellSprite;
     public Sprite blockSprite;
+    private Sprite grillSprite;
+    private GameObject grillObj;
 
-    public void Init(int col, int row, int maxRows)
+
+    public void Init(int col, int row, Sprite gSpr)
     {
         c = col;
         r = row;
+        grillSprite = gSpr;
+
+        grillObj = transform.GetChild(0).gameObject;
+        grillObj.GetComponent<SpriteRenderer>().sprite = grillSprite;
+        
     }
     void Start()
     {
         isOccupied = false;
-        inShadow = false;
-        GetComponent<SpriteRenderer>().sprite = cellSprite;
+        grillInShadow = false;
+        blockInShadow = false;
+    
     }
 
-    public void SetOccupied(bool value)
+    public void SetOccupied(bool value, Sprite sprite, float rot)
     {
         isOccupied = value;
         if (isOccupied)
         {
-            GetComponent<SpriteRenderer>().sprite = blockSprite;
+            GetComponent<SpriteRenderer>().sprite = sprite;
+            transform.rotation = Quaternion.Euler(0f, 0f, rot);
+            grillObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
         }
         else
         {
-            GetComponent<SpriteRenderer>().sprite = cellSprite;
+            GetComponent<SpriteRenderer>().sprite = null;
+            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            grillObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+
         }
     }
 
@@ -44,20 +59,46 @@ public class Cell : MonoBehaviour
 
     public void SetInShadow(bool value)
     {
-        inShadow = value;
-        if (inShadow)
+        SetGrillInShadow(value);
+        SetBlockInShadow(value);
+    }
+
+    public void SetGrillInShadow(bool value)
+    {
+        grillInShadow = value;
+        if (grillInShadow)
         {
-            GetComponent<SpriteRenderer>().color = Color.blue;
+            grillObj.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f, 0.3f);
+            grillObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
         }
         else
         {
-            GetComponent<SpriteRenderer>().color = Color.white;
+            grillObj.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1.0f);
+            grillObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
         }
     }
 
-    public bool InShadow()
+    public void SetBlockInShadow(bool value)
     {
-        return inShadow;
+        blockInShadow = value;
+        if (blockInShadow)
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.7f);
+        }
+        else
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1.0f);
+        }
+    }
+
+    public bool GrillInShadow()
+    {
+        return grillInShadow;
+    }
+
+    public bool BlockInShadow()
+    {
+        return blockInShadow;
     }
 
     public int GetIndex()
@@ -67,7 +108,7 @@ public class Cell : MonoBehaviour
 
     public void Clear()
     {
-        SetOccupied(false);
+        SetOccupied(false, null, 0.0f);
     }
 
     public override string ToString()

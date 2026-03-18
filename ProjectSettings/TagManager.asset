@@ -44,6 +44,9 @@ TagManager:
   - name: Grid
     uniqueID: 2090656047
     locked: 0
+  - name: PlacedBlocks
+    uniqueID: 82551547
+    locked: 0
   - name: Blocks
     uniqueID: 3938317169
     locked: 0

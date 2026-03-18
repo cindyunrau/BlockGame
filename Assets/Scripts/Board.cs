@@ -11,17 +11,25 @@ public class Board : MonoBehaviour
 
     public GameObject cellPrefab;
 
-    public static int numCols = 6;
-    public static int numRows = 5;
+    public static int numCols = 8;
+    public static int numRows = 6;
 
     private Cell[,] cells;
     private List<Cell> cellsInShadow;
+    private List<Transform> minosInShadow;
+    // float blockScale = 0.5f;
+
+    public Sprite GrillSpriteTop;
+    public Sprite GrillSpriteMid;
+    public Sprite GrillSpriteBot;
+
 
     private void Start()
     {
-        transform.position += new Vector3(-(numCols / 2.0f) + 0.5f, 0, 0);
+        transform.position += new Vector3(-(numCols / 2.0f) + 0.5f, -1.5f, 0.0f);
         cells = new Cell[numCols, numRows];
         cellsInShadow = new List<Cell>();
+        minosInShadow = new List<Transform>();
 
         for (int i = 0; i < numCols; i++)
         {
@@ -29,7 +37,18 @@ public class Board : MonoBehaviour
             {
                 GameObject cell = Instantiate(cellPrefab, new Vector3(i, j, 0) + transform.position, transform.rotation, transform);
                 cells[i, j] = cell.GetComponent<Cell>();
-                cells[i, j].Init(i, j, numRows);
+                if (j == 0)
+                {
+                    cells[i, j].Init(i, j, GrillSpriteBot);
+                }
+                else if(j == numRows - 1)
+                {
+                    cells[i, j].Init(i, j, GrillSpriteTop);
+                }
+                else
+                {
+                    cells[i, j].Init(i, j, GrillSpriteMid);
+                }
             }
         }
     }
@@ -106,10 +125,22 @@ public class Board : MonoBehaviour
         return true;
     }
 
-    private void AddShadow(Cell cell)
+    private void AddGrillShadow(Cell cell)
     {
         cellsInShadow.Add(cell);
-        cell.SetInShadow(true);
+        cell.SetGrillInShadow(true);
+    }
+
+    private void AddBlockShadow(Cell cell)
+    {
+        cellsInShadow.Add(cell);
+        cell.SetBlockInShadow(true);
+    }
+
+    private void AddMinoShadow(Transform mino)
+    {
+        minosInShadow.Add(mino);
+        mino.gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.7f);
     }
 
     private void ClearShadows()
@@ -119,6 +150,21 @@ public class Board : MonoBehaviour
             cell.SetInShadow(false);
         }
         cellsInShadow.Clear();
+
+        foreach (Transform mino in minosInShadow)
+        {
+            mino.gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1.0f);
+        }
+        minosInShadow.Clear();
+    }
+
+    private void ClearMinoShadows()
+    {
+        foreach (Transform mino in minosInShadow)
+        {
+            mino.gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1.0f);
+        }
+        minosInShadow.Clear();
     }
 
     public void Hover(List<Transform> minos)
@@ -131,20 +177,35 @@ public class Board : MonoBehaviour
             {
                 Vector3 coords = WorldToBoard(mino.position);
                 Cell cell = cells[(int)coords.x, (int)coords.y];
-                AddShadow(cell);
+                AddGrillShadow(cell);
 
                 if (CheckCol(cell.c))
                 {
                     for(int row = 0; row < numRows; row++)
                     {
-                        AddShadow(cells[cell.c, row]);
+                        AddBlockShadow(cells[cell.c, row]);
                     }
+                    foreach (Transform m in minos)
+                    {
+                        if(WorldToBoard(m.position).x == cell.c)
+                        {
+                            AddMinoShadow(m);
+                        }
+                    }
+                    
                 }
                 if (CheckRow(cell.r))
                 {
                     for (int col = 0; col < numCols; col++)
                     {
-                        AddShadow(cells[col, cell.r]);
+                        AddBlockShadow(cells[col, cell.r]);
+                    }
+                    foreach (Transform m in minos)
+                    {
+                        if(WorldToBoard(m.position).y == cell.r)
+                        {
+                            AddMinoShadow(m);
+                        }
                     }
                 }
             }
@@ -188,7 +249,7 @@ public class Board : MonoBehaviour
         {
             Vector3 coords = WorldToBoard(mino.position);
             Cell cell = cells[(int)coords.x, (int)coords.y];
-            cell.SetOccupied(true);
+            cell.SetOccupied(true,mino.gameObject.GetComponent<SpriteRenderer>().sprite,block.transform.eulerAngles.z + mino.localEulerAngles.z);
 
             if (CheckCol(cell.c) && !colsToClear.Contains(cell)) colsToClear.Add(cell);
             if (CheckRow(cell.r) && !rowsToClear.Contains(cell)) rowsToClear.Add(cell);
@@ -206,7 +267,7 @@ public class Board : MonoBehaviour
     {
         for (int row = 0; row < numRows; row++)
         {
-            if (!cells[col, row].InShadow() && !cells[col, row].IsOccupied()) return false;
+            if (!cells[col, row].GrillInShadow() && !cells[col, row].IsOccupied()) return false;
         }
         return true;
     }
@@ -215,7 +276,7 @@ public class Board : MonoBehaviour
     {
         for (int col = 0; col < numCols; col++)
         {
-            if (!cells[col, row].InShadow() && !cells[col, row].IsOccupied()) return false;
+            if (!cells[col, row].GrillInShadow() && !cells[col, row].IsOccupied()) return false;
         }
         return true;
     }

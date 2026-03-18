@@ -7,13 +7,18 @@ public class SpawnPoint : MonoBehaviour
     private GameManager gm;
     public int cost = 0;
 
-    private Block activeBlock;
+    public Block activeBlock;
 
     private void Start()
     {
         gm = FindObjectOfType<GameManager>(true);
     }
 
+    public void Init(float scale)
+    {
+        transform.localScale *= scale;
+    }
+    
     private void FixedUpdate()
     {
         //if (activeBlock)

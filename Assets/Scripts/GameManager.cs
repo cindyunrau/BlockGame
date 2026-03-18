@@ -128,6 +128,7 @@ public class GameManager : MonoBehaviour
         foreach (SpawnPoint sp in traySpawnPoints)
         {
             sp.SetActiveBlock(Instantiate(ChooseBlock(), sp.transform.position, ChooseRotation(), sp.transform));
+            
         }
     }
 

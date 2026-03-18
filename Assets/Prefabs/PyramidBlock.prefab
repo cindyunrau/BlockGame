@@ -35,7 +35,7 @@ Transform:
   - {fileID: 4263128728688113414}
   - {fileID: 8700818434364701088}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &412134317152219887
 MonoBehaviour:
@@ -51,6 +51,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minos: []
   value: 0
+  cost: 0
+  spawnLocation: 0
+  placeable: 1
 --- !u!50 &2656038418377128404
 Rigidbody2D:
   serializedVersion: 4
@@ -134,6 +137,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7131780579336611644, guid: ca8e42672136e8c4f99bd4f07b76f1f5, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 34f95a0a49265480c88b481f01fed232, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -200,6 +207,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7131780579336611644, guid: ca8e42672136e8c4f99bd4f07b76f1f5, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 97216cf6d8cdd454c8f980f2c8dd0aaf, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -266,6 +277,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7131780579336611644, guid: ca8e42672136e8c4f99bd4f07b76f1f5, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 79f877f0d7cf342cd8b93444928a25e3, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -332,6 +347,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7131780579336611644, guid: ca8e42672136e8c4f99bd4f07b76f1f5, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a4879b673e7854e19bb0b17c42f92b10, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
