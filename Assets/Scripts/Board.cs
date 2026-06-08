@@ -10,56 +10,83 @@ public class Board : MonoBehaviour
     public event Action<Block, int, int> OnBlockPlaced;
 
     public GameObject cellPrefab;
+    public GameObject staticSprite;
 
-    public static int numCols = 8;
-    public static int numRows = 6;
+    public static int numCols = 10;
+    public static int numRows = 8;
 
     private Cell[,] cells;
+    private Cell[,] border;
     private List<Cell> cellsInShadow;
     private List<Mino> minosInShadow;
     private List<Cell> occupiedCells;
     // float blockScale = 0.5f;
 
-    public Sprite GrillSpriteTop;
-    public Sprite GrillSpriteMid;
-    public Sprite GrillSpriteBot;
+    
+    public Sprite GSDefault;
+    public Sprite GSFire;
+
+    public Sprite GSTop;
+    public Sprite GSBottom;
+    public Sprite GSLeft;
+    public Sprite GSRight;
+    public Sprite GSTopLeftCorner;
+    public Sprite GSTopRightCorner;
+    public Sprite GSBotLeftCorner;
+    public Sprite GSBotRightCorner;
+    public Sprite GSHandle;
+
 
 
     private void Start()
     {
-        transform.position += new Vector3(-(numCols / 2.0f) + 0.5f, -1.5f, 0.0f);
+        transform.position += new Vector3(-7f, -4f, 0.0f);
         cells = new Cell[numCols, numRows];
+        //border = new Cell[]
+        
         cellsInShadow = new List<Cell>();
         minosInShadow = new List<Mino>();
         occupiedCells = new List<Cell>();
 
-        for (int i = 0; i < numCols; i++)
+        for (int i = -1; i < numCols+1; i++)
         {
-            for (int j = 0; j < numRows; j++)
+            for (int j = -1; j < numRows+1; j++)
             {
-                GameObject cell = Instantiate(cellPrefab, new Vector3(i, j, 0) + transform.position, transform.rotation, transform);
-                cells[i, j] = cell.GetComponent<Cell>();
-                if (j == 0)
+                if(i>=0 && i<numCols && j>=0 && j < numRows)
                 {
-                    cells[i, j].Init(i, j, GrillSpriteBot);
-                }
-                else if(j == numRows - 1)
+                    
+                    cells[i, j] = Instantiate(cellPrefab, new Vector3(i, j, 0) + transform.position, transform.rotation, transform).GetComponent<Cell>();
+                    cells[i, j].Init(i, j, GSDefault, GSFire);
+                } else
                 {
-                    cells[i, j].Init(i, j, GrillSpriteTop);
+                    GameObject border = Instantiate(staticSprite, new Vector3(i, j, 0) + transform.position, transform.rotation, transform.Find("Border"));
+                    if (i == -1 && j == -1) border.GetComponent<SpriteRenderer>().sprite = GSBotLeftCorner;
+                    else if (i == -1 && j == numRows) border.GetComponent<SpriteRenderer>().sprite = GSTopLeftCorner;
+                    else if (i == numCols && j == -1) border.GetComponent<SpriteRenderer>().sprite = GSBotRightCorner;
+                    else if (i == numCols && j == numRows) border.GetComponent<SpriteRenderer>().sprite = GSTopRightCorner;
+                    else if (i == -1) border.GetComponent<SpriteRenderer>().sprite = GSLeft;
+                    else if (i == numCols) border.GetComponent<SpriteRenderer>().sprite = GSRight;
+                    else if (j == -1) border.GetComponent<SpriteRenderer>().sprite = GSBottom;
+                    else if (j == numRows) border.GetComponent<SpriteRenderer>().sprite = GSTop;
                 }
-                else
-                {
-                    cells[i, j].Init(i, j, GrillSpriteMid);
-                }
+                
             }
         }
+        GameObject handle = Instantiate(staticSprite, new Vector3(-1.35f, 3.5f, 0f) + transform.position, transform.rotation, transform);
+        handle.GetComponent<SpriteRenderer>().sprite = GSHandle;
+        handle.GetComponent<SpriteRenderer>().sortingOrder = 1;
+
+        handle = Instantiate(staticSprite, new Vector3(10.2f, 3.5f, 0f) + transform.position, transform.rotation, transform);
+        handle.GetComponent<SpriteRenderer>().sprite = GSHandle;
+        handle.GetComponent<SpriteRenderer>().sortingOrder = 1;
+        handle.transform.localScale *= -1;
     }
 
     public void Reset()
     {
         foreach (Transform child in transform)
         {
-            child.GetComponent<Cell>().Clear();
+            if(child.name != "Border") child.GetComponent<Cell>().Clear();
         }
         cellsInShadow = new List<Cell>();
         minosInShadow = new List<Mino>();
@@ -258,8 +285,10 @@ public class Board : MonoBehaviour
         {
             Vector3 coords = WorldToBoard(mino.transform.position);
             Cell cell = cells[(int)coords.x, (int)coords.y];
+
             
             cell.SetOccupied(true, mino);
+            cell.mino.transform.localPosition = new Vector3(-0.08f, 0.1f, 0.0f);
             occupiedCells.Add(cell);
 
             if (CheckCol(cell.c) && !colsToClear.Contains(cell)) colsToClear.Add(cell);

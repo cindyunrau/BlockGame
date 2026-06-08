@@ -87,7 +87,6 @@ public class GameManager : MonoBehaviour
         {
             if(sp.GetActiveBlock()) Destroy(sp.GetActiveBlock().gameObject);
         }
-
     }
 
     private bool IsTrayEmpty()
@@ -96,7 +95,6 @@ public class GameManager : MonoBehaviour
         {
             if (sp.GetActiveBlock())
             {
-                //print(sp.GetActiveBlock());
                 return false;
             }
         }
@@ -128,7 +126,6 @@ public class GameManager : MonoBehaviour
         foreach (SpawnPoint sp in traySpawnPoints)
         {
             sp.SetActiveBlock(Instantiate(ChooseBlock(), sp.transform.position, ChooseRotation(), sp.transform));
-            
         }
     }
 

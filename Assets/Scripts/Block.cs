@@ -32,7 +32,6 @@ public class Block: MonoBehaviour
 
     void OnMouseDown()
     {
-        print(transform.eulerAngles.z);
         if (placeable)
         {
             offset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(transform.position).z));
@@ -49,7 +48,7 @@ public class Block: MonoBehaviour
         {
             Vector3 currentScreenPoint = new(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(transform.position).z);
             Vector3 currentWorldPoint = Camera.main.ScreenToWorldPoint(currentScreenPoint) + offset;
-
+            foreach (Mino mino in minos) mino.gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.4f);
             transform.position = currentWorldPoint;
             board.Hover(minos);
         }
@@ -67,6 +66,7 @@ public class Block: MonoBehaviour
         foreach (Mino mino in minos)
         {
             mino.GetComponent<SpriteRenderer>().sortingLayerName = defaultSortingLayer;
+            mino.gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
         }
         
     }

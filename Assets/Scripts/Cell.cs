@@ -10,27 +10,28 @@ public class Cell : MonoBehaviour
     private bool grillInShadow;
 
 
-    private Sprite grillSprite;
+    private Sprite GSDefault;
+    private Sprite GSFire;
     private GameObject grillObj;
 
     public Mino mino;
 
 
-    public void Init(int col, int row, Sprite gSpr)
+    public void Init(int col, int row, Sprite gSpr, Sprite gsfire = null)
     {
         c = col;
         r = row;
-        grillSprite = gSpr;
+        GSDefault = gSpr;
+        GSFire = gsfire;
 
         grillObj = transform.GetChild(0).gameObject;
-        grillObj.GetComponent<SpriteRenderer>().sprite = grillSprite;
+        grillObj.GetComponent<SpriteRenderer>().sprite = GSDefault;
         
     }
     void Start()
     {
         isOccupied = false;
         grillInShadow = false;
-    
     }
 
     public void SetOccupied(bool value, Mino mino)
@@ -60,13 +61,11 @@ public class Cell : MonoBehaviour
         grillInShadow = value;
         if (grillInShadow)
         {
-            grillObj.GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f, 0.3f);
-            grillObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            grillObj.GetComponent<SpriteRenderer>().sprite = GSFire;
         }
         else
         {
-            grillObj.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1.0f);
-            grillObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            grillObj.GetComponent<SpriteRenderer>().sprite = GSDefault;
         }
     }
 
