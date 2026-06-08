@@ -8,12 +8,12 @@ public class Cell : MonoBehaviour
     public int maxRows;
     private bool isOccupied;
     private bool grillInShadow;
-    private bool blockInShadow;
 
-    private Sprite cellSprite;
-    public Sprite blockSprite;
+
     private Sprite grillSprite;
     private GameObject grillObj;
+
+    public Mino mino;
 
 
     public void Init(int col, int row, Sprite gSpr)
@@ -30,25 +30,17 @@ public class Cell : MonoBehaviour
     {
         isOccupied = false;
         grillInShadow = false;
-        blockInShadow = false;
     
     }
 
-    public void SetOccupied(bool value, Sprite sprite, float rot)
+    public void SetOccupied(bool value, Mino mino)
     {
         isOccupied = value;
+        this.mino = mino;
         if (isOccupied)
         {
-            GetComponent<SpriteRenderer>().sprite = sprite;
-            transform.rotation = Quaternion.Euler(0f, 0f, rot);
-            grillObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-        }
-        else
-        {
-            GetComponent<SpriteRenderer>().sprite = null;
-            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-            grillObj.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-
+            mino.transform.SetParent(this.transform);
+            mino.transform.position = this.transform.position;
         }
     }
 
@@ -60,7 +52,7 @@ public class Cell : MonoBehaviour
     public void SetInShadow(bool value)
     {
         SetGrillInShadow(value);
-        SetBlockInShadow(value);
+        if(mino) mino.SetInShadow(value);
     }
 
     public void SetGrillInShadow(bool value)
@@ -78,27 +70,11 @@ public class Cell : MonoBehaviour
         }
     }
 
-    public void SetBlockInShadow(bool value)
-    {
-        blockInShadow = value;
-        if (blockInShadow)
-        {
-            gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.7f);
-        }
-        else
-        {
-            gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1.0f);
-        }
-    }
+
 
     public bool GrillInShadow()
     {
         return grillInShadow;
-    }
-
-    public bool BlockInShadow()
-    {
-        return blockInShadow;
     }
 
     public int GetIndex()
@@ -108,7 +84,8 @@ public class Cell : MonoBehaviour
 
     public void Clear()
     {
-        SetOccupied(false, null, 0.0f);
+        if (mino) Destroy(mino.gameObject);
+        SetOccupied(false, null);
     }
 
     public override string ToString()

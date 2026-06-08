@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Block: MonoBehaviour
 {
-    public List<Transform> minos = new();
+    public List<Mino> minos = new();
 
     public int value = 0;
     public int cost = 0;
@@ -15,6 +15,9 @@ public class Block: MonoBehaviour
     private Vector3 originalPosition;
     private Board board;
 
+    private string activeSortingLayer = "ActiveBlock";
+    private string defaultSortingLayer = "Blocks";
+
     private void Awake()
     {
         originalPosition = transform.position;
@@ -22,16 +25,21 @@ public class Block: MonoBehaviour
 
         foreach (Transform child in transform)
         {
-            minos.Add(child);
+            minos.Add(child.gameObject.GetComponent<Mino>());
             value += 1;
         }
     }
 
     void OnMouseDown()
     {
+        print(transform.eulerAngles.z);
         if (placeable)
         {
             offset = transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.WorldToScreenPoint(transform.position).z));
+        }
+        foreach (Mino mino in minos)
+        {
+            mino.GetComponent<SpriteRenderer>().sortingLayerName = activeSortingLayer;
         }
     }
 
@@ -56,6 +64,11 @@ public class Block: MonoBehaviour
                 SetOriginalPosition();
             }
         }
+        foreach (Mino mino in minos)
+        {
+            mino.GetComponent<SpriteRenderer>().sortingLayerName = defaultSortingLayer;
+        }
+        
     }
 
     private void SetOriginalPosition()
@@ -65,7 +78,7 @@ public class Block: MonoBehaviour
 
     public void SetColor(Color color)
     {
-        foreach(Transform mino in minos)
+        foreach(Mino mino in minos)
         {
             mino.GetComponent<SpriteRenderer>().color = color;
         }

@@ -16,7 +16,8 @@ public class Board : MonoBehaviour
 
     private Cell[,] cells;
     private List<Cell> cellsInShadow;
-    private List<Transform> minosInShadow;
+    private List<Mino> minosInShadow;
+    private List<Cell> occupiedCells;
     // float blockScale = 0.5f;
 
     public Sprite GrillSpriteTop;
@@ -29,7 +30,8 @@ public class Board : MonoBehaviour
         transform.position += new Vector3(-(numCols / 2.0f) + 0.5f, -1.5f, 0.0f);
         cells = new Cell[numCols, numRows];
         cellsInShadow = new List<Cell>();
-        minosInShadow = new List<Transform>();
+        minosInShadow = new List<Mino>();
+        occupiedCells = new List<Cell>();
 
         for (int i = 0; i < numCols; i++)
         {
@@ -59,6 +61,9 @@ public class Board : MonoBehaviour
         {
             child.GetComponent<Cell>().Clear();
         }
+        cellsInShadow = new List<Cell>();
+        minosInShadow = new List<Mino>();
+        occupiedCells = new List<Cell>();
     }
 
     // Converts World Coordinates (float) to Board Coordinates (int)
@@ -100,11 +105,11 @@ public class Board : MonoBehaviour
         return cells[(int)boardCoords.x, (int)boardCoords.y].IsOccupied();
     }
 
-    public bool CanPlace(List<Transform> minos)
+    public bool CanPlace(List<Mino> minos)
     {
-        foreach (Transform mino in minos)
+        foreach (Mino mino in minos)
         {
-            if (!InBounds(mino.position) || IsOccupied(mino.position))
+            if (!InBounds(mino.transform.position) || IsOccupied(mino.transform.position))
             {
                 return false;
             }
@@ -114,9 +119,9 @@ public class Board : MonoBehaviour
 
     private bool CanPlaceAt(Block block, Vector3 pos)
     {
-        foreach (Transform mino in block.minos)
+        foreach (Mino mino in block.minos)
         {
-            Vector3 minoTransformed = pos + block.transform.rotation * mino.localPosition;
+            Vector3 minoTransformed = pos + block.transform.rotation * mino.transform.localPosition;
             if (!InBounds(minoTransformed) || IsOccupied(minoTransformed))
             {
                 return false;
@@ -134,10 +139,10 @@ public class Board : MonoBehaviour
     private void AddBlockShadow(Cell cell)
     {
         cellsInShadow.Add(cell);
-        cell.SetBlockInShadow(true);
+        if(cell.mino) cell.mino.SetInShadow(true);
     }
 
-    private void AddMinoShadow(Transform mino)
+    private void AddMinoShadow(Mino mino)
     {
         minosInShadow.Add(mino);
         mino.gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.7f);
@@ -151,7 +156,7 @@ public class Board : MonoBehaviour
         }
         cellsInShadow.Clear();
 
-        foreach (Transform mino in minosInShadow)
+        foreach (Mino mino in minosInShadow)
         {
             mino.gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1.0f);
         }
@@ -160,22 +165,22 @@ public class Board : MonoBehaviour
 
     private void ClearMinoShadows()
     {
-        foreach (Transform mino in minosInShadow)
+        foreach (Mino mino in minosInShadow)
         {
             mino.gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1.0f);
         }
         minosInShadow.Clear();
     }
 
-    public void Hover(List<Transform> minos)
+    public void Hover(List<Mino> minos)
     {
         ClearShadows();
 
         if (CanPlace(minos))
         {
-            foreach (Transform mino in minos)
+            foreach (Mino mino in minos)
             {
-                Vector3 coords = WorldToBoard(mino.position);
+                Vector3 coords = WorldToBoard(mino.transform.position);
                 Cell cell = cells[(int)coords.x, (int)coords.y];
                 AddGrillShadow(cell);
 
@@ -185,9 +190,9 @@ public class Board : MonoBehaviour
                     {
                         AddBlockShadow(cells[cell.c, row]);
                     }
-                    foreach (Transform m in minos)
+                    foreach (Mino m in minos)
                     {
-                        if(WorldToBoard(m.position).x == cell.c)
+                        if(WorldToBoard(m.transform.position).x == cell.c)
                         {
                             AddMinoShadow(m);
                         }
@@ -200,9 +205,9 @@ public class Board : MonoBehaviour
                     {
                         AddBlockShadow(cells[col, cell.r]);
                     }
-                    foreach (Transform m in minos)
+                    foreach (Mino m in minos)
                     {
-                        if(WorldToBoard(m.position).y == cell.r)
+                        if(WorldToBoard(m.transform.position).y == cell.r)
                         {
                             AddMinoShadow(m);
                         }
@@ -214,7 +219,6 @@ public class Board : MonoBehaviour
 
     public bool CheckPlaceable(Block block)
     {
-        
         for (int i = 0; i < numCols; i++)
         {
             for (int j = 0; j < numRows; j++)
@@ -241,15 +245,22 @@ public class Board : MonoBehaviour
 
     private void PlaceBlock(Block block)
     {
+        foreach(Cell cell in occupiedCells)
+        {
+            cell.mino.IncreaseAge();
+        }
+
         ClearShadows();
         List<Cell> colsToClear = new();
         List<Cell> rowsToClear = new();
 
-        foreach (Transform mino in block.minos)
+        foreach (Mino mino in block.minos)
         {
-            Vector3 coords = WorldToBoard(mino.position);
+            Vector3 coords = WorldToBoard(mino.transform.position);
             Cell cell = cells[(int)coords.x, (int)coords.y];
-            cell.SetOccupied(true,mino.gameObject.GetComponent<SpriteRenderer>().sprite,block.transform.eulerAngles.z + mino.localEulerAngles.z);
+            
+            cell.SetOccupied(true, mino);
+            occupiedCells.Add(cell);
 
             if (CheckCol(cell.c) && !colsToClear.Contains(cell)) colsToClear.Add(cell);
             if (CheckRow(cell.r) && !rowsToClear.Contains(cell)) rowsToClear.Add(cell);
@@ -259,8 +270,6 @@ public class Board : MonoBehaviour
         foreach (Cell cell in rowsToClear) ClearRow(cell.r);
 
         OnBlockPlaced.Invoke(block, colsToClear.Count + rowsToClear.Count, colsToClear.Count * numRows + rowsToClear.Count * numCols);
-
-        
     }
 
     private bool CheckCol(int col)
@@ -286,6 +295,7 @@ public class Board : MonoBehaviour
         Debug.Log($"column {col} clear");
         for (int row = 0; row < numRows; row++)
         {
+            occupiedCells.Remove(cells[col, row]);
             cells[col, row].Clear();
         }
     }
@@ -295,6 +305,7 @@ public class Board : MonoBehaviour
         Debug.Log($"row {row} clear");
         for (int col = 0; col < numCols; col++)
         {
+            occupiedCells.Remove(cells[col, row]);
             cells[col, row].Clear();
         }
     }
