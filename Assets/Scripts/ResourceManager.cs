@@ -66,6 +66,20 @@ public class ResourceManager : MonoBehaviour
         foods.Add(greenPepper);
         foods.Add(yellowPepper);
         foods.Add(redPepper);
+    }
 
+    public Tile GetTile(string name)
+    {
+        return foods.Find(x => x.name == name);
+    }
+
+    public Sprite GetDefaultSprite(string name)
+    {
+        return GetTile(name).rawSprite;
+    }
+
+    public Sprite GetCookedSprite(string name)
+    {
+        return GetTile(name).cookedSprite;
     }
 }

@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
 
     public Camera mainCamera;
 
-    public ResourceManager resourceManager;
+    public ResourceManager rm;
 
     void Start()
     {
@@ -73,6 +73,7 @@ public class GameManager : MonoBehaviour
     private void HandleBlockPlaced(Block block, int numLines, int blocksRemoved)
     {
         score += block.value;
+        // ??? diff
         streak -= block.cost;
         block.GetComponentInParent<SpawnPoint>().SetActiveBlock(null);
         
@@ -83,7 +84,7 @@ public class GameManager : MonoBehaviour
         SpawnShopItems();
         UpdateUI();
 
-        //Destroy(block.gameObject);
+        Destroy(block.gameObject);
 
         if (CheckNoMoves()) GameOver();
     }
@@ -144,8 +145,8 @@ public class GameManager : MonoBehaviour
         foreach (SpawnPoint sp in traySpawnPoints)
         {
             Block block = Instantiate(ChooseBlock(), sp.transform.position, ChooseRotation(), sp.transform);
-            block.SetSprite(resourceManager.foods[Random.Range(0, resourceManager.foods.Count)].rawSprite);
-            print(resourceManager.foods[Random.Range(0, resourceManager.foods.Count)].name);
+            ResourceManager.Tile tile = rm.foods[Random.Range(0, rm.foods.Count)];
+            block.Init(tile.name, tile.rawSprite);
             sp.SetActiveBlock(block);
 
         }

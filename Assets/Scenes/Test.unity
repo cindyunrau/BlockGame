@@ -989,6 +989,7 @@ MonoBehaviour:
   GSBotLeftCorner: {fileID: -644191293, guid: fd931aaba9a332b48a5bbb7d9dc7efb7, type: 3}
   GSBotRightCorner: {fileID: -478579290, guid: fd931aaba9a332b48a5bbb7d9dc7efb7, type: 3}
   GSHandle: {fileID: -1317280472, guid: fd931aaba9a332b48a5bbb7d9dc7efb7, type: 3}
+  rm: {fileID: 0}
 --- !u!4 &152205640
 Transform:
   m_ObjectHideFlags: 0
@@ -1718,7 +1719,7 @@ MonoBehaviour:
   popupText: {fileID: 2945225420905614440, guid: 1375f17967bcf364c8f5dc6659a60a38, type: 3}
   button: {fileID: 1639792166}
   mainCamera: {fileID: 1199791154}
-  resourceManager: {fileID: 0}
+  resourceManager: {fileID: 1016930087}
 --- !u!114 &381427034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3375,8 +3376,8 @@ GameObject:
   - component: {fileID: 1016930088}
   - component: {fileID: 1016930087}
   m_Layer: 0
-  m_Name: ResouceManager
-  m_TagString: Untagged
+  m_Name: ResourceManager
+  m_TagString: ResourceManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -15,6 +15,10 @@ public class Board : MonoBehaviour
     public static int numCols = 10;
     public static int numRows = 8;
 
+    public static int RAW_BONUS = 0;
+    public static int COOKED_BONUS = 10;
+    public static int BURNT_BONUS = -2;
+
     private Cell[,] cells;
     private Cell[,] border;
     private List<Cell> cellsInShadow;
@@ -37,13 +41,12 @@ public class Board : MonoBehaviour
     public Sprite GSBotRightCorner;
     public Sprite GSHandle;
 
-
+    public ResourceManager rm;
 
     private void Start()
     {
         transform.position += new Vector3(-7f, -4f, 0.0f);
         cells = new Cell[numCols, numRows];
-        //border = new Cell[]
         
         cellsInShadow = new List<Cell>();
         minosInShadow = new List<Mino>();
@@ -83,6 +86,7 @@ public class Board : MonoBehaviour
         handle.GetComponent<SpriteRenderer>().sortingOrder = 1;
         handle.transform.localScale *= -1;
     }
+
 
     public void Reset()
     {
@@ -261,7 +265,10 @@ public class Board : MonoBehaviour
     {
         foreach(Cell cell in occupiedCells)
         {
-            cell.mino.IncreaseAge();
+            if (cell.mino.IncreaseAge(1))
+            {
+                cell.mino.SetSprite(rm.GetCookedSprite(cell.mino.foodName));
+            }
         }
 
         ClearShadows();
@@ -282,8 +289,9 @@ public class Board : MonoBehaviour
             if (CheckRow(cell.r) && !rowsToClear.Contains(cell)) rowsToClear.Add(cell);
         }
 
-        foreach (Cell cell in colsToClear) ClearCol(cell.c);
-        foreach (Cell cell in rowsToClear) ClearRow(cell.r);
+        int bonusPoints = 0;
+        foreach (Cell cell in colsToClear) bonusPoints += ClearCol(cell.c);
+        foreach (Cell cell in rowsToClear) bonusPoints += ClearRow(cell.r);
 
         OnBlockPlaced.Invoke(block, colsToClear.Count + rowsToClear.Count, colsToClear.Count * numRows + rowsToClear.Count * numCols);
     }
@@ -306,23 +314,34 @@ public class Board : MonoBehaviour
         return true;
     }
 
-    private void ClearCol(int col)
+    // returns number of points received for optimal mino 'status'
+    private int ClearCol(int col)
     {
         Debug.Log($"column {col} clear");
-        for (int r = 0; r < numRows; r++)
+        int bonusPoints = 0;
+        for (int row = 0; row < numRows; row++)
         {
-            occupiedCells.Remove(cells[col, r]);
-            cells[col, r].Clear();
+            occupiedCells.Remove(cells[col, row]);
+            if (cells[col, row].mino.status == "raw") bonusPoints += RAW_BONUS;
+            else if (cells[col, row].mino.status == "cooked") bonusPoints += COOKED_BONUS;
+            else if (cells[col, row].mino.status == "burnt") bonusPoints += BURNT_BONUS;
+            cells[col, row].Clear();
         }
+        return bonusPoints;
     }
 
-    private void ClearRow(int row)
+    private int ClearRow(int row)
     {
         Debug.Log($"row {row} clear");
-        for (int c = 0; c < numCols; c++)
+        int bonusPoints = 0;
+        for (int col = 0; col < numCols; col++)
         {
-            occupiedCells.Remove(cells[c, row]);
-            cells[c, row].Clear();
+            occupiedCells.Remove(cells[col, row]);
+            if (cells[col, row].mino.status == "raw") bonusPoints += RAW_BONUS;
+            else if (cells[col, row].mino.status == "cooked") bonusPoints += COOKED_BONUS;
+            else if (cells[col, row].mino.status == "burnt") bonusPoints += BURNT_BONUS;
+            cells[col, row].Clear();
         }
+        return bonusPoints;
     }
 }

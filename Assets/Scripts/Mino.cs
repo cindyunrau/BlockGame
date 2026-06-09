@@ -7,16 +7,50 @@ public class Mino : MonoBehaviour
     // The number of turns this mino has been on the board
     public int currentAge = 0;
     // The number of turns before this mino starts decaying
-    public int primeAge = 3;
+    public int cookedAge = 3;
+    public int burntAge = 6;
 
-
+    public string status = "raw";
 
     public bool inShadow;
-    public void IncreaseAge()
+    public string foodName;
+
+
+    public void Init(string food, Sprite spr)
     {
-        currentAge += 1;
-        //SetColour(new Color(1f, 0f, 0f, (currentAge+1/primeAge)));
+        foodName = food;
+        SetSprite(spr);
     }
+
+    public void SetSprite(Sprite spr)
+    {
+        GetComponent<SpriteRenderer>().sprite = spr;
+    }
+
+    // Returns true if increasing the age passes a threshold
+    public bool IncreaseAge(int inc)
+    {
+        currentAge += inc;
+        if (currentAge - inc < cookedAge && currentAge >= cookedAge)
+        {
+            if (currentAge >= burntAge) status = "burnt";
+            else if (currentAge >= cookedAge) status = "cooked";
+            return true;
+        }
+        return false;
+    }
+
+
+    public bool IsCooked()
+    {
+        return (currentAge >= cookedAge);
+    }
+
+    //public void setCooked()
+    //{
+    //    sr.sprite = rm.GetCookedSprite(foodName);
+    //}
+
     public void SetInShadow(bool value)
     {
         inShadow = value;

@@ -26,17 +26,18 @@ public class Block: MonoBehaviour
         foreach (Transform child in transform)
         {
             minos.Add(child.gameObject.GetComponent<Mino>());
-            value += 1;
+            value += 5;
         }
     }
 
-    public void SetSprite(Sprite sprite)
+    public void Init(string foodname, Sprite spr)
     {
-        foreach (Mino mino in minos)
+        foreach(Mino mino in minos)
         {
-            mino.GetComponent<SpriteRenderer>().sprite = sprite;
+            mino.Init(foodname, spr);
         }
     }
+
 
     void OnMouseDown()
     {
