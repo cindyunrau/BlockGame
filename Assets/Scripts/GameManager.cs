@@ -19,10 +19,13 @@ public class GameManager : MonoBehaviour
     private List<SpawnPoint> traySpawnPoints = new();
     public List<SpawnPoint> shopSpawnPoints = new();
 
+    public Canvas canvas;
     public TextMeshProUGUI scoreUI;
     public TextMeshProUGUI streakUI;
+    public TextMeshProUGUI popupText;
     public GameObject button;
 
+    public Camera mainCamera;
 
     void Start()
     {
@@ -70,13 +73,15 @@ public class GameManager : MonoBehaviour
         score += block.value;
         streak -= block.cost;
         block.GetComponentInParent<SpawnPoint>().SetActiveBlock(null);
-        Destroy(block.gameObject);
-
-        HandleLinesCleared(numLines, blocksRemoved);
+        
+        int scoreAdded = HandleLinesCleared(numLines, blocksRemoved);
+        if (scoreAdded > 0) TriggerTextFade(scoreAdded, block.transform.position);
 
         if (IsTrayEmpty()) SpawnAll();
         SpawnShopItems();
         UpdateUI();
+
+        //Destroy(block.gameObject);
 
         if (CheckNoMoves()) GameOver();
     }
@@ -107,12 +112,23 @@ public class GameManager : MonoBehaviour
         return true;
     }
 
-    private void HandleLinesCleared(int numLines, int blocksRemoved)
+    private int HandleLinesCleared(int numLines, int blocksRemoved)
     {
         int basePoints = 2 * blocksRemoved;
         int combo = numLines * 10;
         streak = (numLines > 0) ? streak + 1 : 0;
-        score += (basePoints + combo) * streak ;
+        int scoreToAdd = (basePoints + combo) * streak;
+        score += scoreToAdd;
+
+        return scoreToAdd;
+    }
+
+    public void TriggerTextFade(int score, Vector3 pos)
+    {
+        TextMeshProUGUI text = Instantiate<TextMeshProUGUI>(popupText,canvas.transform);
+        text.transform.position = mainCamera.WorldToScreenPoint(pos);
+        text.text = $"{score}";
+        GetComponent<TextFade>().TriggerFadeSequence(text);
     }
 
     private void UpdateUI()

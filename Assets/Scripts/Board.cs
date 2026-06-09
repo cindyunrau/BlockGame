@@ -307,20 +307,20 @@ public class Board : MonoBehaviour
     private void ClearCol(int col)
     {
         Debug.Log($"column {col} clear");
-        for (int row = 0; row < numRows; row++)
+        for (int r = 0; r < numRows; r++)
         {
-            occupiedCells.Remove(cells[col, row]);
-            cells[col, row].Clear();
+            occupiedCells.Remove(cells[col, r]);
+            cells[col, r].Clear();
         }
     }
 
     private void ClearRow(int row)
     {
         Debug.Log($"row {row} clear");
-        for (int col = 0; col < numCols; col++)
+        for (int c = 0; c < numCols; c++)
         {
-            occupiedCells.Remove(cells[col, row]);
-            cells[col, row].Clear();
+            occupiedCells.Remove(cells[c, row]);
+            cells[c, row].Clear();
         }
     }
 }
