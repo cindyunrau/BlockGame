@@ -20,6 +20,7 @@ public class Board : MonoBehaviour
     private List<Cell> cellsInShadow;
     private List<Mino> minosInShadow;
     private List<Cell> occupiedCells;
+    private List<Cell> currentHover;
     // float blockScale = 0.5f;
 
     
@@ -47,6 +48,7 @@ public class Board : MonoBehaviour
         cellsInShadow = new List<Cell>();
         minosInShadow = new List<Mino>();
         occupiedCells = new List<Cell>();
+        currentHover = new List<Cell>();
 
         for (int i = -1; i < numCols+1; i++)
         {
@@ -54,10 +56,10 @@ public class Board : MonoBehaviour
             {
                 if(i>=0 && i<numCols && j>=0 && j < numRows)
                 {
-                    
                     cells[i, j] = Instantiate(cellPrefab, new Vector3(i, j, 0) + transform.position, transform.rotation, transform).GetComponent<Cell>();
                     cells[i, j].Init(i, j, GSDefault, GSFire);
-                } else
+                } 
+                else
                 {
                     GameObject border = Instantiate(staticSprite, new Vector3(i, j, 0) + transform.position, transform.rotation, transform.Find("Border"));
                     if (i == -1 && j == -1) border.GetComponent<SpriteRenderer>().sprite = GSBotLeftCorner;
@@ -72,11 +74,11 @@ public class Board : MonoBehaviour
                 
             }
         }
-        GameObject handle = Instantiate(staticSprite, new Vector3(-1.35f, 3.5f, 0f) + transform.position, transform.rotation, transform);
+        GameObject handle = Instantiate(staticSprite, new Vector3(-1.35f, 3.5f, 0f) + transform.position, transform.rotation, transform.Find("Border"));
         handle.GetComponent<SpriteRenderer>().sprite = GSHandle;
         handle.GetComponent<SpriteRenderer>().sortingOrder = 1;
 
-        handle = Instantiate(staticSprite, new Vector3(10.2f, 3.5f, 0f) + transform.position, transform.rotation, transform);
+        handle = Instantiate(staticSprite, new Vector3(10.2f, 3.5f, 0f) + transform.position, transform.rotation, transform.Find("Border"));
         handle.GetComponent<SpriteRenderer>().sprite = GSHandle;
         handle.GetComponent<SpriteRenderer>().sortingOrder = 1;
         handle.transform.localScale *= -1;
@@ -157,7 +159,7 @@ public class Board : MonoBehaviour
         return true;
     }
 
-    private void AddGrillShadow(Cell cell)
+    private void OnGrillHover(Cell cell)
     {
         cellsInShadow.Add(cell);
         cell.SetGrillInShadow(true);
@@ -166,13 +168,7 @@ public class Board : MonoBehaviour
     private void AddBlockShadow(Cell cell)
     {
         cellsInShadow.Add(cell);
-        if(cell.mino) cell.mino.SetInShadow(true);
-    }
-
-    private void AddMinoShadow(Mino mino)
-    {
-        minosInShadow.Add(mino);
-        mino.gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.7f);
+        cell.SetInShadow(true);
     }
 
     private void ClearShadows()
@@ -180,6 +176,7 @@ public class Board : MonoBehaviour
         foreach (Cell cell in cellsInShadow)
         {
             cell.SetInShadow(false);
+            cell.SetGrillInShadow(false);
         }
         cellsInShadow.Clear();
 
@@ -190,53 +187,41 @@ public class Board : MonoBehaviour
         minosInShadow.Clear();
     }
 
-    private void ClearMinoShadows()
-    {
-        foreach (Mino mino in minosInShadow)
-        {
-            mino.gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1.0f);
-        }
-        minosInShadow.Clear();
-    }
-
     public void Hover(List<Mino> minos)
     {
-        ClearShadows();
+        bool moved = false;
 
-        if (CanPlace(minos))
+        foreach (Mino mino in minos)
         {
-            foreach (Mino mino in minos)
-            {
-                Vector3 coords = WorldToBoard(mino.transform.position);
-                Cell cell = cells[(int)coords.x, (int)coords.y];
-                AddGrillShadow(cell);
+            Vector3 coords = WorldToBoard(mino.transform.position);
+            if (!cellsInShadow.Exists(c => (c.c == (int)coords.x) && (c.r == (int)coords.y))) moved = true;
+        }
 
-                if (CheckCol(cell.c))
+
+        if (moved)
+        {
+            ClearShadows();
+            if (CanPlace(minos))
+            {
+                foreach (Mino mino in minos)
                 {
-                    for(int row = 0; row < numRows; row++)
+                    Vector3 coords = WorldToBoard(mino.transform.position);
+                    Cell cell = cells[(int)coords.x, (int)coords.y];
+
+                    OnGrillHover(cell);
+
+                    if (CheckCol(cell.c))
                     {
-                        AddBlockShadow(cells[cell.c, row]);
-                    }
-                    foreach (Mino m in minos)
-                    {
-                        if(WorldToBoard(m.transform.position).x == cell.c)
+                        for (int row = 0; row < numRows; row++)
                         {
-                            AddMinoShadow(m);
+                            AddBlockShadow(cells[cell.c, row]);
                         }
                     }
-                    
-                }
-                if (CheckRow(cell.r))
-                {
-                    for (int col = 0; col < numCols; col++)
+                    if (CheckRow(cell.r))
                     {
-                        AddBlockShadow(cells[col, cell.r]);
-                    }
-                    foreach (Mino m in minos)
-                    {
-                        if(WorldToBoard(m.transform.position).y == cell.r)
+                        for (int col = 0; col < numCols; col++)
                         {
-                            AddMinoShadow(m);
+                            AddBlockShadow(cells[col, cell.r]);
                         }
                     }
                 }

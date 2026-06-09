@@ -143,3 +143,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba2b8c86799c77146aafc798233c0de3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentAge: 0
+  primeAge: 3
+  fire: {fileID: 1918635728937070129, guid: ec1553bfd3b62924cad6f56b251979e3, type: 3}

@@ -1,0 +1,360 @@
+fileFormatVersion: 2
+guid: a21752d63bb52874b9697b6b2c98e913
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
+  textureImporterSettings:
+    alphaSource: 1
+    mipMapMode: 0
+    enableMipMap: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+    convertToNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+    swizzle: 50462976
+    isReadable: 0
+    streamingMipmaps: 0
+    streamingMipmapsPriority: 0
+    vTOnly: 0
+    ignoreMipmapLimit: 0
+    nPOTScale: 1
+    sRGBTexture: 1
+    spriteMode: 2
+    spriteExtrude: 1
+    spriteMeshType: 1
+    alignment: 0
+    spritePivot: {x: 0.5, y: 0.5}
+    spritePixelsToUnits: 100
+    spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+    spriteGenerateFallbackPhysicsShape: 0
+    generateCubemap: 6
+    cubemapConvolution: 0
+    seamlessCubemap: 0
+    alphaIsTransparency: 1
+    spriteTessellationDetail: -1
+    textureType: 8
+    textureShape: 1
+    singleChannelComponent: 0
+    flipbookRows: 0
+    flipbookColumns: 0
+    ignorePngGamma: 0
+    cookieMode: 0
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+    normalMap: 0
+    textureFormat: 0
+    maxTextureSize: 0
+    lightmap: 0
+    compressionQuality: 0
+    linearTexture: 0
+    grayScaleToAlpha: 0
+    rGBM: 0
+    cubemapConvolutionSteps: 0
+    cubemapConvolutionExponent: 0
+    maxTextureSizeSet: 0
+    compressionQualitySet: 0
+    textureFormatSet: 0
+    applyGammaDecoding: 0
+  previousAsepriteImporterSettings:
+    fileImportMode: 1
+    importHiddenLayers: 0
+    layerImportMode: 1
+    defaultPivotSpace: 0
+    defaultPivotAlignment: 7
+    customPivotPosition: {x: 0.5, y: 0.5}
+    spritePadding: 0
+    generateModelPrefab: 1
+    generateAnimationClips: 1
+    addSortingGroup: 1
+    addShadowCasters: 0
+  asepriteImporterSettings:
+    fileImportMode: 1
+    importHiddenLayers: 0
+    layerImportMode: 1
+    defaultPivotSpace: 0
+    defaultPivotAlignment: 7
+    customPivotPosition: {x: 0.5, y: 0.5}
+    spritePadding: 0
+    generateModelPrefab: 1
+    generateAnimationClips: 1
+    addSortingGroup: 1
+    addShadowCasters: 0
+  importFileNodeState: 1
+  platformSettingsDirtyTick: 0
+  textureAssetName: 
+  singleSpriteImportData:
+  - name: 
+    originalName: 
+    pivot: {x: 0, y: 0}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    spriteID: 
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 0, y: 0}
+  animatedSpriteImportData:
+  - name: fire asset green floored_Frame_0
+    originalName: 
+    pivot: {x: 0.49509808, y: -0.7619048}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 4
+      width: 204
+      height: 42
+    spriteID: 0a6cf8cffb6550842a9b9c75dac035a9
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 4}
+  - name: fire asset green floored_Frame_1
+    originalName: 
+    pivot: {x: 0.49753696, y: -0.7619048}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 54
+      width: 203
+      height: 42
+    spriteID: d78209c46f14527449af63fb413eec20
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 54}
+  - name: fire asset green floored_Frame_2
+    originalName: 
+    pivot: {x: 0.5, y: -0.7619048}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 104
+      width: 202
+      height: 42
+    spriteID: 6bd3664cbd9405d4c96853294e223868
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 104}
+  - name: fire asset green floored_Frame_3
+    originalName: 
+    pivot: {x: 0.5, y: -0.7619048}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 154
+      width: 202
+      height: 42
+    spriteID: 9989ed7f037842d4b91ad8acdf0c7e81
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 154}
+  - name: fire asset green floored_Frame_4
+    originalName: 
+    pivot: {x: 0.49753696, y: -0.78048784}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 302
+      width: 203
+      height: 41
+    spriteID: 5cca15eed20f5e54b8c94b59a1735ee3
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 302}
+  - name: fire asset green floored_Frame_5
+    originalName: 
+    pivot: {x: 0.4926108, y: -0.78048784}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 351
+      width: 203
+      height: 41
+    spriteID: 398aee77553a6f84f8a08e1777ba2755
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 351}
+  - name: fire asset green floored_Frame_6
+    originalName: 
+    pivot: {x: 0.49509808, y: -0.78048784}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 204
+      width: 204
+      height: 41
+    spriteID: bc9fd218053bc0b4a8534f708b1b326c
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 204}
+  - name: fire asset green floored_Frame_7
+    originalName: 
+    pivot: {x: 0.49509808, y: -0.78048784}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 253
+      width: 204
+      height: 41
+    spriteID: 91e864f5e85800f40934a2f555e2a504
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 253}
+  spriteSheetImportData: []
+  asepriteLayers:
+  - layerIndex: 0
+    guid: -1731729638
+    name: fire asset green floored
+    layerFlags: 0
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: fire asset green floored_Frame_0
+      frameIndex: 0
+      cellRect:
+        x: 19
+        y: 32
+        width: 204
+        height: 42
+      spriteId: 0a6cf8cffb6550842a9b9c75dac035a9
+    - name: fire asset green floored_Frame_1
+      frameIndex: 1
+      cellRect:
+        x: 19
+        y: 32
+        width: 203
+        height: 42
+      spriteId: d78209c46f14527449af63fb413eec20
+    - name: fire asset green floored_Frame_2
+      frameIndex: 2
+      cellRect:
+        x: 19
+        y: 32
+        width: 202
+        height: 42
+      spriteId: 6bd3664cbd9405d4c96853294e223868
+    - name: fire asset green floored_Frame_3
+      frameIndex: 3
+      cellRect:
+        x: 19
+        y: 32
+        width: 202
+        height: 42
+      spriteId: 9989ed7f037842d4b91ad8acdf0c7e81
+    - name: fire asset green floored_Frame_4
+      frameIndex: 4
+      cellRect:
+        x: 19
+        y: 32
+        width: 203
+        height: 41
+      spriteId: 5cca15eed20f5e54b8c94b59a1735ee3
+    - name: fire asset green floored_Frame_5
+      frameIndex: 5
+      cellRect:
+        x: 20
+        y: 32
+        width: 203
+        height: 41
+      spriteId: 398aee77553a6f84f8a08e1777ba2755
+    - name: fire asset green floored_Frame_6
+      frameIndex: 6
+      cellRect:
+        x: 19
+        y: 32
+        width: 204
+        height: 41
+      spriteId: bc9fd218053bc0b4a8534f708b1b326c
+    - name: fire asset green floored_Frame_7
+      frameIndex: 7
+      cellRect:
+        x: 19
+        y: 32
+        width: 204
+        height: 41
+      spriteId: 91e864f5e85800f40934a2f555e2a504
+    linkedCells: []
+    parentIndex: -1
+  platformSettings: []
+  secondarySpriteTextures: []
+  spritePackingTag: 
+  canvasSize: {x: 240, y: 144}

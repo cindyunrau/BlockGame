@@ -8,11 +8,15 @@ public class Cell : MonoBehaviour
     public int maxRows;
     private bool isOccupied;
     private bool grillInShadow;
+    private bool onFire;
 
 
     private Sprite GSDefault;
     private Sprite GSFire;
     private GameObject grillObj;
+    public GameObject firePrefab;
+
+    private GameObject fireObj;
 
     public Mino mino;
 
@@ -23,15 +27,20 @@ public class Cell : MonoBehaviour
         r = row;
         GSDefault = gSpr;
         GSFire = gsfire;
+        
 
         grillObj = transform.GetChild(0).gameObject;
         grillObj.GetComponent<SpriteRenderer>().sprite = GSDefault;
+
+        fireObj = Instantiate(firePrefab, transform.position, transform.rotation, transform);
+        fireObj.gameObject.SetActive(false);
         
     }
     void Start()
     {
         isOccupied = false;
         grillInShadow = false;
+        onFire = false;
     }
 
     public void SetOccupied(bool value, Mino mino)
@@ -52,8 +61,20 @@ public class Cell : MonoBehaviour
 
     public void SetInShadow(bool value)
     {
-        SetGrillInShadow(value);
-        if(mino) mino.SetInShadow(value);
+        if(mino && !(mino.inShadow == value)) mino.SetInShadow(value);
+
+        if(!(onFire == value))
+        {
+            onFire = value;
+            if (value)
+            {
+                fireObj.gameObject.SetActive(true);
+            }
+            else
+            {
+                fireObj.gameObject.SetActive(false);
+            }
+        }
     }
 
     public void SetGrillInShadow(bool value)
@@ -62,6 +83,7 @@ public class Cell : MonoBehaviour
         if (grillInShadow)
         {
             grillObj.GetComponent<SpriteRenderer>().sprite = GSFire;
+            
         }
         else
         {

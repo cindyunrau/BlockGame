@@ -9,11 +9,13 @@ public class Mino : MonoBehaviour
     // The number of turns before this mino starts decaying
     public int primeAge = 3;
 
-    private bool inShadow;
+
+
+    public bool inShadow;
     public void IncreaseAge()
     {
         currentAge += 1;
-        SetColour(new Color(1f, 0f, 0f, (currentAge+1/primeAge)));
+        //SetColour(new Color(1f, 0f, 0f, (currentAge+1/primeAge)));
     }
     public void SetInShadow(bool value)
     {
