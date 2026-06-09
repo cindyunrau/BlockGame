@@ -146,6 +146,8 @@ public class Board : MonoBehaviour
         return true;
     }
 
+
+
     private bool CanPlaceAt(Block block, Vector3 pos)
     {
         foreach (Mino mino in block.minos)

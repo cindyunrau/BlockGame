@@ -30,6 +30,14 @@ public class Block: MonoBehaviour
         }
     }
 
+    public void SetSprite(Sprite sprite)
+    {
+        foreach (Mino mino in minos)
+        {
+            mino.GetComponent<SpriteRenderer>().sprite = sprite;
+        }
+    }
+
     void OnMouseDown()
     {
         if (placeable)

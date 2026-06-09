@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 {
     private Board board;
 
-    public List<Block> blockTypes;
+    public List<Block> blockShapes;
     public Block singleBlock;
     public Block tBlock;
 
@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour
     public GameObject button;
 
     public Camera mainCamera;
+
+    public ResourceManager resourceManager;
 
     void Start()
     {
@@ -141,7 +143,11 @@ public class GameManager : MonoBehaviour
     {
         foreach (SpawnPoint sp in traySpawnPoints)
         {
-            sp.SetActiveBlock(Instantiate(ChooseBlock(), sp.transform.position, ChooseRotation(), sp.transform));
+            Block block = Instantiate(ChooseBlock(), sp.transform.position, ChooseRotation(), sp.transform);
+            block.SetSprite(resourceManager.foods[Random.Range(0, resourceManager.foods.Count)].rawSprite);
+            print(resourceManager.foods[Random.Range(0, resourceManager.foods.Count)].name);
+            sp.SetActiveBlock(block);
+
         }
     }
 
@@ -190,8 +196,9 @@ public class GameManager : MonoBehaviour
 
     private Block ChooseBlock()
     {
-        int rng = Random.Range(0, blockTypes.Count);
-        return blockTypes[rng];
+        Block block = blockShapes[Random.Range(0, blockShapes.Count)];
+
+        return block;
     }
 
     private Quaternion ChooseRotation()
