@@ -989,7 +989,7 @@ MonoBehaviour:
   GSBotLeftCorner: {fileID: -644191293, guid: fd931aaba9a332b48a5bbb7d9dc7efb7, type: 3}
   GSBotRightCorner: {fileID: -478579290, guid: fd931aaba9a332b48a5bbb7d9dc7efb7, type: 3}
   GSHandle: {fileID: -1317280472, guid: fd931aaba9a332b48a5bbb7d9dc7efb7, type: 3}
-  rm: {fileID: 0}
+  rm: {fileID: 1016930087}
 --- !u!4 &152205640
 Transform:
   m_ObjectHideFlags: 0
@@ -1719,7 +1719,7 @@ MonoBehaviour:
   popupText: {fileID: 2945225420905614440, guid: 1375f17967bcf364c8f5dc6659a60a38, type: 3}
   button: {fileID: 1639792166}
   mainCamera: {fileID: 1199791154}
-  resourceManager: {fileID: 1016930087}
+  rm: {fileID: 1016930087}
 --- !u!114 &381427034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5351,7 +5351,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1649126209}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.5, y: -0.5, z: 0}
+  m_LocalPosition: {x: 5, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

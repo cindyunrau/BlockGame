@@ -56,7 +56,7 @@ public class Cell : MonoBehaviour
 
     public bool IsOccupied()
     {
-        return isOccupied;
+        return (!onFire && isOccupied);
     }
 
     public void SetInShadow(bool value)

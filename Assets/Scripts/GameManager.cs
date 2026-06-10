@@ -89,6 +89,13 @@ public class GameManager : MonoBehaviour
         if (CheckNoMoves()) GameOver();
     }
 
+    private int CalculatePoints()
+    {
+        int points = 0;
+
+        return points;
+    }
+
     private void ResetTray()
     {
         foreach(SpawnPoint sp in traySpawnPoints)

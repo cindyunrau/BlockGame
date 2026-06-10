@@ -27,6 +27,16 @@ public class Mino : MonoBehaviour
         GetComponent<SpriteRenderer>().sprite = spr;
     }
 
+    public int TurnsUntilCooked()
+    {
+        return cookedAge - currentAge;
+    }
+
+    public bool IsCookedNextTurn()
+    {
+        if (TurnsUntilCooked() <= 1) return true;
+        return false;
+    }
     // Returns true if increasing the age passes a threshold
     public bool IncreaseAge(int inc)
     {

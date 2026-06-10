@@ -22,6 +22,7 @@ public class Board : MonoBehaviour
     private Cell[,] cells;
     private Cell[,] border;
     private List<Cell> cellsInShadow;
+    private List<Cell> cellsOnFire;
     private List<Mino> minosInShadow;
     private List<Cell> occupiedCells;
     private List<Cell> currentHover;
@@ -51,7 +52,7 @@ public class Board : MonoBehaviour
         cellsInShadow = new List<Cell>();
         minosInShadow = new List<Mino>();
         occupiedCells = new List<Cell>();
-        currentHover = new List<Cell>();
+        cellsOnFire = new List<Cell>();
 
         for (int i = -1; i < numCols+1; i++)
         {
@@ -173,7 +174,7 @@ public class Board : MonoBehaviour
 
     private void AddBlockShadow(Cell cell)
     {
-        cellsInShadow.Add(cell);
+        cellsOnFire.Add(cell);
         cell.SetInShadow(true);
     }
 
@@ -181,7 +182,7 @@ public class Board : MonoBehaviour
     {
         foreach (Cell cell in cellsInShadow)
         {
-            cell.SetInShadow(false);
+            //cell.SetInShadow(false);
             cell.SetGrillInShadow(false);
         }
         cellsInShadow.Clear();
@@ -191,6 +192,16 @@ public class Board : MonoBehaviour
             mino.gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1.0f);
         }
         minosInShadow.Clear();
+    }
+
+    private void ClearFire()
+    {
+        print("Fire Cleared");
+        foreach (Cell cell in cellsOnFire)
+        {
+            cell.SetInShadow(false);
+        }
+        cellsOnFire.Clear();
     }
 
     public void Hover(List<Mino> minos)
@@ -216,21 +227,45 @@ public class Board : MonoBehaviour
 
                     OnGrillHover(cell);
 
-                    if (CheckCol(cell.c))
-                    {
-                        for (int row = 0; row < numRows; row++)
-                        {
-                            AddBlockShadow(cells[cell.c, row]);
-                        }
-                    }
-                    if (CheckRow(cell.r))
-                    {
-                        for (int col = 0; col < numCols; col++)
-                        {
-                            AddBlockShadow(cells[col, cell.r]);
-                        }
-                    }
                 }
+                //// Check all cols for matches
+                //for (int c = 0; c < numCols; c++)
+                //{
+                //    if (CheckCol(c))
+                //    {
+                //        for (int row = 0; row < numRows; row++)
+                //        {
+                //            AddBlockShadow(cells[c, row]);
+                //        }
+                //    }
+                //}
+                //// Check all rows for matches
+                //for (int r = 0; r < numRows; r++)
+                //{
+                //    if (CheckRow(r))
+                //    {
+                //        for (int col = 0; col < numCols; col++)
+                //        {
+                //            AddBlockShadow(cells[col, r]);
+                //        }
+                //    }
+                //}
+                //dep
+                //if (CheckCol(cell.c))
+                //    {
+                //        for (int row = 0; row < numRows; row++)
+                //        {
+                //            AddBlockShadow(cells[cell.c, row]);
+                //        }
+                //    }
+                //    if (CheckRow(cell.r))
+                //    {
+                //        for (int col = 0; col < numCols; col++)
+                //        {
+                //            AddBlockShadow(cells[col, cell.r]);
+                //        }
+                //    }
+                
             }
         }
     }
@@ -263,7 +298,10 @@ public class Board : MonoBehaviour
 
     private void PlaceBlock(Block block)
     {
-        foreach(Cell cell in occupiedCells)
+        ClearShadows();
+        ClearFire();
+
+        foreach (Cell cell in occupiedCells)
         {
             if (cell.mino.IncreaseAge(1))
             {
@@ -271,27 +309,69 @@ public class Board : MonoBehaviour
             }
         }
 
-        ClearShadows();
-        List<Cell> colsToClear = new();
-        List<Cell> rowsToClear = new();
+
+        List<int> colsToClear = new();
+        List<int> rowsToClear = new();
+        List<int> colsNextTurn = new();
+        List<int> rowsNextTurn = new();
+
+
+
+
+        // Check all cols for matches
+        for (int c = 0; c < numCols; c++)
+        {
+            if (CheckCol(c)) colsToClear.Add(c);
+        }
+        // Check all rows for matches
+        for (int r = 0; r < numRows; r++)
+        {
+            if (CheckRow(r)) rowsToClear.Add(r);
+        }
+
+
+        //    for(int c = 0;c< numCols; c++)
+        //    {
+        //        if (CheckCol(cell.c) && !colsToClear.Contains(cell)) colsToClear.Add(cell);
+        //    }
+
+        //    if (CheckRow(cell.r) && !rowsToClear.Contains(cell)) rowsToClear.Add(cell);
+        //}
+
+
+
+        int bonusPoints = 0;
+        foreach (int i in colsToClear) bonusPoints += ClearCol(i);
+        foreach (int i in rowsToClear) bonusPoints += ClearRow(i);
+
+
+
+        
 
         foreach (Mino mino in block.minos)
         {
             Vector3 coords = WorldToBoard(mino.transform.position);
             Cell cell = cells[(int)coords.x, (int)coords.y];
 
-            
+
             cell.SetOccupied(true, mino);
             cell.mino.transform.localPosition = new Vector3(-0.08f, 0.1f, 0.0f);
             occupiedCells.Add(cell);
-
-            if (CheckCol(cell.c) && !colsToClear.Contains(cell)) colsToClear.Add(cell);
-            if (CheckRow(cell.r) && !rowsToClear.Contains(cell)) rowsToClear.Add(cell);
         }
 
-        int bonusPoints = 0;
-        foreach (Cell cell in colsToClear) bonusPoints += ClearCol(cell.c);
-        foreach (Cell cell in rowsToClear) bonusPoints += ClearRow(cell.r);
+        // Check all cols for matches
+        for (int c = 0; c < numCols; c++)
+        {
+            if (CheckColNextTurn(c)) colsNextTurn.Add(c);
+        }
+        // Check all rows for matches
+        for (int r = 0; r < numRows; r++)
+        {
+            if (CheckRowNextTurn(r)) rowsNextTurn.Add(r);
+        }
+
+        foreach (int i in colsNextTurn) SetColFire(i);
+        foreach (int i in rowsNextTurn) SetRowFire(i);
 
         OnBlockPlaced.Invoke(block, colsToClear.Count + rowsToClear.Count, colsToClear.Count * numRows + rowsToClear.Count * numCols);
     }
@@ -300,7 +380,11 @@ public class Board : MonoBehaviour
     {
         for (int row = 0; row < numRows; row++)
         {
-            if (!cells[col, row].GrillInShadow() && !cells[col, row].IsOccupied()) return false;
+            //if ((!cells[col, row].GrillInShadow() && !cells[col, row].IsOccupied()) || (cells[col, row].mino != null && cells[col, row].mino.status == "raw"))
+            if ((!cells[col, row].IsOccupied()) || (cells[col, row].mino != null && cells[col, row].mino.status == "raw"))
+            {
+                return false;
+            }
         }
         return true;
     }
@@ -309,7 +393,34 @@ public class Board : MonoBehaviour
     {
         for (int col = 0; col < numCols; col++)
         {
-            if (!cells[col, row].GrillInShadow() && !cells[col, row].IsOccupied()) return false;
+            if (!cells[col, row].GrillInShadow() && !cells[col, row].IsOccupied() || (cells[col, row].mino != null && cells[col, row].mino.status == "raw"))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private bool CheckColNextTurn(int col)
+    {
+        for (int row = 0; row < numRows; row++)
+        {
+            if (!cells[col, row].GrillInShadow() && !cells[col, row].IsOccupied() || (cells[col, row].mino != null && !cells[col, row].mino.IsCookedNextTurn()))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private bool CheckRowNextTurn(int row)
+    {
+        for (int col = 0; col < numCols; col++)
+        {
+            if (!cells[col, row].GrillInShadow() && !cells[col, row].IsOccupied() || (cells[col, row].mino != null && !cells[col, row].mino.IsCookedNextTurn()))
+            {
+                return false;
+            }
         }
         return true;
     }
@@ -343,5 +454,23 @@ public class Board : MonoBehaviour
             cells[col, row].Clear();
         }
         return bonusPoints;
+    }
+
+    private void SetRowFire(int r)
+    {
+        print("SetRowFire");
+        for (int col = 0; col < numCols; col++)
+        {
+            AddBlockShadow(cells[col, r]);
+        }
+    }
+
+    private void SetColFire(int c)
+    {
+        print("SetColFire");
+        for (int row = 0; row < numRows; row++)
+        {
+            AddBlockShadow(cells[c, row]);
+        }
     }
 }
