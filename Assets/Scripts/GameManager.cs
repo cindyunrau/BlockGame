@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -70,15 +71,24 @@ public class GameManager : MonoBehaviour
         button.SetActive(true);
     }
 
-    private void HandleBlockPlaced(Block block, int numLines, int blocksRemoved)
+    private void HandleBlockPlaced(Block block, List<int> colsCleared, List<int> rowsCleared)
     {
+        int numLines = colsCleared.Count + rowsCleared.Count;
+        int blocksRemoved = colsCleared.Count * Board.numRows + rowsCleared.Count * Board.numCols;
         score += block.value;
-        // ??? diff
+        // ??? diff value and cost?
         streak -= block.cost;
         block.GetComponentInParent<SpawnPoint>().SetActiveBlock(null);
         
         int scoreAdded = HandleLinesCleared(numLines, blocksRemoved);
-        if (scoreAdded > 0) TriggerTextFade(scoreAdded, block.transform.position);
+
+        if (scoreAdded > 0)
+        {
+            int xpos = colsCleared.Count > 0 ? (int)colsCleared.Average() : 0;
+            int ypos = rowsCleared.Count > 0 ? (int)rowsCleared.Average() : 0;
+            Vector3 averageClearPosition = board.BoardToWorld(xpos,ypos);//new Vector3(xpos,ypos, block.transform.position.z);
+            TriggerTextFade(scoreAdded, averageClearPosition);
+        }
 
         if (IsTrayEmpty()) SpawnAll();
         SpawnShopItems();

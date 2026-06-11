@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class Board : MonoBehaviour
 {
-    public event Action<Block, int, int> OnBlockPlaced;
+    public event Action<Block, List<int>, List<int>> OnBlockPlaced;
 
     public GameObject cellPrefab;
     public GameObject staticSprite;
@@ -112,7 +112,7 @@ public class Board : MonoBehaviour
     }
 
     // Converts Board Coordinates (int) to World Coordinates (float)
-    private Vector3 BoardToWorld(int x, int y)
+    public Vector3 BoardToWorld(int x, int y)
     {
         Vector3 result = new();
         result.x = transform.position.x + x;
@@ -338,15 +338,9 @@ public class Board : MonoBehaviour
         //    if (CheckRow(cell.r) && !rowsToClear.Contains(cell)) rowsToClear.Add(cell);
         //}
 
-
-
         int bonusPoints = 0;
         foreach (int i in colsToClear) bonusPoints += ClearCol(i);
         foreach (int i in rowsToClear) bonusPoints += ClearRow(i);
-
-
-
-        
 
         foreach (Mino mino in block.minos)
         {
@@ -373,7 +367,7 @@ public class Board : MonoBehaviour
         foreach (int i in colsNextTurn) SetColFire(i);
         foreach (int i in rowsNextTurn) SetRowFire(i);
 
-        OnBlockPlaced.Invoke(block, colsToClear.Count + rowsToClear.Count, colsToClear.Count * numRows + rowsToClear.Count * numCols);
+        OnBlockPlaced.Invoke(block, colsToClear, rowsToClear);
     }
 
     private bool CheckCol(int col)
