@@ -41,7 +41,7 @@ public class Mino : MonoBehaviour
     public bool IncreaseAge(int inc)
     {
         currentAge += inc;
-        if (currentAge - inc < cookedAge && currentAge >= cookedAge)
+        if ((currentAge - inc < cookedAge && currentAge >= cookedAge) || (currentAge - inc < burntAge && currentAge >= burntAge))
         {
             if (currentAge >= burntAge) status = "burnt";
             else if (currentAge >= cookedAge) status = "cooked";

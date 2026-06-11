@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour
         if (CheckNoMoves()) GameOver();
     }
 
-    private int CalculatePoints()
+    private int CalculateScore()
     {
         int points = 0;
 

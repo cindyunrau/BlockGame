@@ -305,7 +305,14 @@ public class Board : MonoBehaviour
         {
             if (cell.mino.IncreaseAge(1))
             {
-                cell.mino.SetSprite(rm.GetCookedSprite(cell.mino.foodName));
+                if(cell.mino.status == "cooked")
+                {
+                    cell.mino.SetSprite(rm.GetCookedSprite(cell.mino.foodName));
+                }
+                else if(cell.mino.status == "burnt")
+                {
+                    cell.mino.SetSprite(rm.GetBurntSprite(cell.mino.foodName));
+                }
             }
         }
 
@@ -314,8 +321,6 @@ public class Board : MonoBehaviour
         List<int> rowsToClear = new();
         List<int> colsNextTurn = new();
         List<int> rowsNextTurn = new();
-
-
 
 
         // Check all cols for matches
