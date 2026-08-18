@@ -56,7 +56,7 @@ public class Cell : MonoBehaviour
 
     public bool IsOccupied()
     {
-        return (!onFire && isOccupied);
+        return isOccupied;
     }
 
     public void SetInShadow(bool value)
@@ -75,6 +75,11 @@ public class Cell : MonoBehaviour
                 fireObj.gameObject.SetActive(false);
             }
         }
+    }
+
+    public void SetGlow(bool value)
+    {
+        if (mino && !(mino.inShadow == value)) mino.SetGlow(value);
     }
 
     public void SetGrillInShadow(bool value)

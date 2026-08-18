@@ -144,5 +144,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentAge: 0
-  primeAge: 3
-  fire: {fileID: 1918635728937070129, guid: ec1553bfd3b62924cad6f56b251979e3, type: 3}
+  cookedAge: 3
+  burntAge: 6
+  status: raw
+  inShadow: 0
+  foodName: 
+  defaultRef: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  glowRef: {fileID: 2100000, guid: 44d6447c6d7014c1c9a01beb54c331ad, type: 2}
