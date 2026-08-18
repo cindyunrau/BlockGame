@@ -34,7 +34,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -714,8 +714,8 @@ TextureImporter:
       name: b322246d-00c1-479c-93cc-c304290e80ca_149
       rect:
         serializedVersion: 2
-        x: 895
-        y: 19
+        x: 754
+        y: 1021
         width: 95
         height: 95
       alignment: 0

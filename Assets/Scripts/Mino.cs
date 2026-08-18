@@ -15,6 +15,20 @@ public class Mino : MonoBehaviour
     public bool inShadow;
     public string foodName;
 
+    //private Renderer renderer;
+    //private Shader glow;
+    //private Shader spriteLit;
+
+    public Material defaultRef;
+    public Material glowRef;
+
+
+    void Start()
+    {
+        //renderer = GetComponent<Renderer>();
+        //glow = Shader.Find("Assets/Shaders/Food.mat");
+        //spriteLit = Shader.Find("Packages/com.unity.render-pipelines.universal/Runtime/Materials/Sprite-Lit-Default.mat");
+    }
 
     public void Init(string food, Sprite spr)
     {
@@ -27,11 +41,46 @@ public class Mino : MonoBehaviour
         GetComponent<SpriteRenderer>().sprite = spr;
     }
 
+    public void SetGlow(bool value)
+    {
+        Debug.Log($"Set glow {value}");
+        if (value){
+            GetComponent<Renderer>().material = glowRef;
+        }
+        else
+        {
+            GetComponent<Renderer>().material = defaultRef;
+        }
+    }
+
+    public int TurnsUntilCooked()
+    {
+        return cookedAge - currentAge;
+    }
+
+    public bool IsCookedNextTurn()
+    {
+        if (TurnsUntilCooked() <= 1) return true;
+        return false;
+    }
+
+    public int TurnsUntilBurnt()
+    {
+        return burntAge - currentAge;
+    }
+
+    public bool IsBurntNextTurn()
+    {
+        if (TurnsUntilBurnt () == 1) return true;
+        return false;
+    }
+
     // Returns true if increasing the age passes a threshold
     public bool IncreaseAge(int inc)
     {
         currentAge += inc;
-        if (currentAge - inc < cookedAge && currentAge >= cookedAge)
+
+        if ((currentAge - inc < cookedAge && currentAge >= cookedAge) || (currentAge - inc < burntAge && currentAge >= burntAge))
         {
             if (currentAge >= burntAge) status = "burnt";
             else if (currentAge >= cookedAge) status = "cooked";

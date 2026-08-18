@@ -77,6 +77,11 @@ public class Cell : MonoBehaviour
         }
     }
 
+    public void SetGlow(bool value)
+    {
+        if (mino && !(mino.inShadow == value)) mino.SetGlow(value);
+    }
+
     public void SetGrillInShadow(bool value)
     {
         grillInShadow = value;
