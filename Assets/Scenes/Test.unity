@@ -3400,7 +3400,7 @@ MonoBehaviour:
   cookedCornSprite: {fileID: -32609917, guid: a35b52da05181ff4a80ae566ba9b2696, type: 3}
   rawOnionSprite: {fileID: 1789638537, guid: a35b52da05181ff4a80ae566ba9b2696, type: 3}
   cookedOnionSprite: {fileID: 1177762077, guid: a35b52da05181ff4a80ae566ba9b2696, type: 3}
-  rawBaconSprite: {fileID: 1378709710, guid: a35b52da05181ff4a80ae566ba9b2696, type: 3}
+  rawBaconSprite: {fileID: -1553749569, guid: e9e755a24c27c0641b66ccfa4d30c15a, type: 3}
   cookedBaconSprite: {fileID: 782826651, guid: a35b52da05181ff4a80ae566ba9b2696, type: 3}
   rawSalmonSprite: {fileID: 1273605745, guid: a35b52da05181ff4a80ae566ba9b2696, type: 3}
   cookedSalmonSprite: {fileID: -648885371, guid: a35b52da05181ff4a80ae566ba9b2696, type: 3}
@@ -3421,7 +3421,7 @@ MonoBehaviour:
   DEBUGrawOnionSprite: {fileID: -645493285, guid: 21dc962e421b57d408ace1ec9d61a170, type: 3}
   DEBUGcookedOnionSprite: {fileID: -1939145038, guid: 21dc962e421b57d408ace1ec9d61a170, type: 3}
   DEBUGburntOnionSprite: {fileID: -1561742568, guid: 21dc962e421b57d408ace1ec9d61a170, type: 3}
-  DEBUGrawBaconSprite: {fileID: -1890539843, guid: 21dc962e421b57d408ace1ec9d61a170, type: 3}
+  DEBUGrawBaconSprite: {fileID: -1553749569, guid: e9e755a24c27c0641b66ccfa4d30c15a, type: 3}
   DEBUGcookedBaconSprite: {fileID: 548076125, guid: 21dc962e421b57d408ace1ec9d61a170, type: 3}
   DEBUGburntBaconSprite: {fileID: 186302456, guid: 21dc962e421b57d408ace1ec9d61a170, type: 3}
   DEBUGrawSalmonSprite: {fileID: -607933593, guid: 21dc962e421b57d408ace1ec9d61a170, type: 3}
